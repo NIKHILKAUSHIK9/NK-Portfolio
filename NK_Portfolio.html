@@ -1,0 +1,1626 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NK Portfolio</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Devicon -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Outfit", "sans-serif"],
+              display: ["Space Grotesk", "sans-serif"],
+            },
+            colors: {
+              void: "#000000",
+              "neon-pink": "#ff2a6d",
+              "neon-purple": "#d300c5",
+              "cyan-bright": "#05d9e8",
+              "galaxy-gold": "#ffaa00",
+              "glass-border": "rgba(255, 255, 255, 0.1)",
+              "fade-blue": "#0f172a",
+            },
+            backgroundImage: {
+              "glass-gradient":
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)",
+            },
+            animation: {
+              "spin-slow": "spin 10s linear infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+      /* Custom Styles & Utilities */
+      body {
+        background-color: #000000;
+        color: #e2e8f0;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      /* Canvas Background (Stars) */
+      #cosmic-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 120%; /* Wider to allow parallax movement */
+        height: 100%;
+        z-index: -2;
+        opacity: 0.6;
+        left: -10%; /* Start slightly off-center for movement range */
+      }
+
+      /* Black Hole Container */
+      #blackhole-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      #blackhole-canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+      }
+
+      /* Vignette Overlay */
+      .vignette {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, transparent 60%, #000000 100%);
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      /* Glassmorphism Classes */
+      .glass-panel {
+        background: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .glass-card {
+        background: linear-gradient(
+          135deg,
+          rgba(30, 30, 30, 0.3) 0%,
+          rgba(10, 10, 10, 0.1) 100%
+        );
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .glass-card:hover {
+        border-color: rgba(255, 170, 0, 0.3);
+        background: linear-gradient(
+          135deg,
+          rgba(40, 40, 40, 0.4) 0%,
+          rgba(20, 20, 20, 0.2) 100%
+        );
+        box-shadow: 0 0 20px rgba(255, 170, 0, 0.1);
+      }
+
+      /* 3D TILT ENGINE */
+      .tilt-card {
+        position: relative;
+        transform-style: preserve-3d;
+        transform: perspective(1000px);
+        background: rgba(20, 20, 20, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+        transition: background 0.3s ease;
+      }
+
+      .tilt-card:hover {
+        background: #000000;
+      }
+
+      .tilt-card-content {
+        transform: translateZ(50px);
+        transform-style: preserve-3d;
+        pointer-events: none;
+      }
+
+      .tilt-icon {
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: inline-block;
+      }
+
+      .tilt-card:hover .tilt-icon {
+        transform: scale(1.2) translateZ(20px);
+      }
+
+      /* Neon Border Circle Animation */
+      @keyframes border-rotate {
+        from {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      .neon-border-effect {
+        position: relative;
+        isolation: isolate;
+      }
+
+      .neon-border-effect::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 250%;
+        height: 250%;
+        background: conic-gradient(
+          transparent 80%,
+          #ffaa00 90%,
+          transparent 100%
+        );
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+      }
+
+      .neon-border-effect:hover::after {
+        opacity: 0.5;
+        animation: border-rotate 4s linear infinite;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000000;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #ffaa00;
+      }
+
+      /* Floating Icons Animation */
+      .float-icon {
+        animation: floating 6s ease-in-out infinite;
+      }
+      .float-delay-1 {
+        animation-delay: 0s;
+      }
+      .float-delay-2 {
+        animation-delay: 2s;
+      }
+      .float-delay-3 {
+        animation-delay: 4s;
+      }
+
+      @keyframes floating {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(10deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+      }
+
+      /* --- EDUCATION CARD HOVER ANIMATION --- */
+      .edu-card {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        height: 320px;
+        background: rgba(20, 20, 20, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        transition: 0.4s ease-out;
+        margin: 0 auto;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .edu-card:hover {
+        height: 420px;
+        background: #000000;
+        border-color: var(--hover-color);
+        box-shadow: 0 0 25px var(--hover-glow);
+      }
+
+      .edu-imgbx {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 280px;
+        height: 220px;
+        background: #0a0a0a;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: 0.5s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .edu-card:hover .edu-imgbx {
+        top: -100px;
+        transform: translateX(-50%) scale(0.75);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+        border-color: var(--hover-color);
+      }
+
+      .edu-content {
+        position: absolute;
+        top: 260px;
+        width: 100%;
+        padding: 0 25px;
+        height: 40px;
+        overflow: hidden;
+        text-align: center;
+        transition: 0.5s;
+        opacity: 0.8;
+      }
+
+      .edu-card:hover .edu-content {
+        top: 140px;
+        height: 260px;
+        opacity: 1;
+      }
+
+      .edu-content h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.5rem;
+      }
+
+      .edu-content .subtitle {
+        font-size: 0.9rem;
+        color: var(--hover-color);
+        margin-bottom: 1rem;
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      .edu-content p {
+        color: #ccc;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      /* Hero Text Shadow */
+      .hero-text-glow {
+        text-shadow:
+          0 0 40px rgba(0, 0, 0, 0.9),
+          0 0 10px rgba(0, 0, 0, 0.7);
+        background: radial-gradient(
+          closest-side,
+          rgba(0, 0, 0, 0.5),
+          transparent
+        );
+      }
+
+      /* Gradient Animation */
+      .animate-gradient {
+        background-size: 200% auto;
+        animation: gradient 3s linear infinite;
+      }
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* --- Transient Circle Effect --- */
+      .transient-circle {
+        position: relative;
+        z-index: 10;
+      }
+      .transient-circle::before {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        padding: 4px;
+        background: conic-gradient(
+          from 0deg,
+          transparent,
+          #ff2a6d,
+          #d300c5,
+          transparent
+        );
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: rotate-ring 4s linear infinite;
+      }
+      @keyframes rotate-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .transient-glow {
+        box-shadow:
+          0 0 30px rgba(255, 42, 109, 0.3),
+          inset 0 0 20px rgba(211, 0, 197, 0.2);
+      }
+    </style>
+  </head>
+  <body
+    class="font-sans antialiased selection:bg-galaxy-gold selection:text-black"
+  >
+    <!-- Backgrounds -->
+    <canvas id="cosmic-canvas"></canvas>
+
+    <!-- 3D Black Hole Container -->
+    <div id="blackhole-container"></div>
+
+    <div class="vignette"></div>
+
+    <!-- Navigation -->
+    <nav
+      id="navbar"
+      class="fixed top-0 w-full z-50 transition-all duration-300 glass-panel border-b-0"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          <!-- Logo -->
+          <div
+            class="flex-shrink-0 cursor-pointer"
+            onclick="gsap.to(window, { duration: 1, scrollTo: '#home' })"
+          >
+            <span class="font-display font-bold text-3xl tracking-tighter">
+              <span class="text-galaxy-gold">NIKHIL KAUSHIK</span
+              ><span class="text-galaxy-gold"></span>
+            </span>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8">
+              <a
+                href="#home"
+                class="nav-link text-gray-300 hover:text-galaxy-gold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
+              >
+                Home
+                <span
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-galaxy-gold transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+              <a
+                href="#about"
+                class="nav-link text-gray-300 hover:text-neon-purple px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
+              >
+                About
+                <span
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-neon-purple transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+              <a
+                href="#skills"
+                class="nav-link text-gray-300 hover:text-neon-pink px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
+              >
+                Skills
+                <span
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-neon-pink transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+              <a
+                href="#contact"
+                class="nav-link text-gray-300 hover:text-cyan-bright px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
+              >
+                Contact
+                <span
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-bright transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+            <button
+              id="mobile-menu-btn"
+              class="text-gray-300 hover:text-white focus:outline-none"
+            >
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Mobile Menu Panel -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden glass-panel border-t border-gray-800"
+      >
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="#home"
+            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10"
+            >Home</a
+          >
+          <a
+            href="#about"
+            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
+            >About</a
+          >
+          <a
+            href="#skills"
+            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
+            >Skills</a
+          >
+          <a
+            href="#contact"
+            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-0">
+      <!-- Hero Section -->
+      <section
+        id="home"
+        class="min-h-screen flex items-center justify-center relative px-4 sm:px-6 lg:px-8 overflow-hidden"
+      >
+        <!-- Text Content -->
+        <div
+          class="z-10 text-center space-y-6 max-w-4xl hero-text-glow p-8 rounded-3xl"
+        >
+          <div
+            class="inline-block px-4 py-1 rounded-full border border-galaxy-gold/50 bg-galaxy-gold/10 backdrop-blur-sm"
+          >
+            <span class="text-galaxy-gold font-mono text-sm tracking-widest"
+              >EVENT HORIZON REACHED</span
+            >
+          </div>
+          <h1
+            class="font-display text-5xl sm:text-7xl lg:text-8xl font-bold leading-tight"
+          >
+            <span class="block text-white mb-2">Physics.</span>
+            <span class="block text-white mb-2">Programming.</span>
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-galaxy-gold via-red-500 to-galaxy-gold animate-gradient"
+              >Singularity.</span
+            >
+          </h1>
+          <p
+            class="text-gray-300 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed"
+          >
+            Bridging the gap between theoretical physics and computational
+            reality.
+          </p>
+          <div class="flex gap-4 pt-4 justify-center">
+            <button
+              onclick="gsap.to(window, { duration: 1, scrollTo: '#contact' })"
+              class="px-8 py-3 bg-galaxy-gold hover:bg-yellow-600 text-black font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(255,170,0,0.5)] hover:shadow-[0_0_30px_rgba(255,170,0,0.8)]"
+            >
+              Explore Work
+            </button>
+            <button
+              onclick="gsap.to(window, { duration: 1, scrollTo: '#skills' })"
+              class="px-8 py-3 border border-white/30 text-white hover:bg-white hover:text-black font-bold rounded-lg transition-all backdrop-blur-sm bg-black/30"
+            >
+              View Skills
+            </button>
+          </div>
+        </div>
+
+        <!-- Floating Icons -->
+        <div
+          class="absolute top-1/4 left-10 lg:left-1/4 text-4xl text-galaxy-gold float-icon float-delay-1 z-0 opacity-60"
+        >
+          <i class="fas fa-atom"></i>
+        </div>
+        <div
+          class="absolute bottom-1/4 right-10 lg:right-1/4 text-4xl text-neon-purple float-icon float-delay-2 z-0 opacity-60"
+        >
+          <i class="fas fa-code"></i>
+        </div>
+        <div
+          class="absolute top-1/3 right-10 lg:right-20 text-3xl text-red-500 float-icon float-delay-3 z-0 opacity-60"
+        >
+          <i class="fas fa-star"></i>
+        </div>
+      </section>
+
+      <!-- Core Capabilities -->
+      <section class="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div
+              class="gsap-fade-up tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect"
+            >
+              <div class="tilt-card-content flex flex-col items-start h-full">
+                <i
+                  class="fas fa-microchip text-4xl text-cyan-bright mb-6 tilt-icon drop-shadow-[0_0_10px_rgba(5,217,232,0.5)]"
+                ></i>
+                <h3 class="font-display text-xl font-bold mb-3 text-white">
+                  Computational Physics
+                </h3>
+                <p class="text-gray-400 text-sm">
+                  Simulating complex systems using numerical methods. From
+                  orbital mechanics to quantum states.
+                </p>
+              </div>
+            </div>
+            <!-- Card 2 -->
+            <div
+              class="gsap-fade-up tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect"
+            >
+              <div class="tilt-card-content flex flex-col items-start h-full">
+                <i
+                  class="fas fa-brain text-4xl text-neon-purple mb-6 tilt-icon drop-shadow-[0_0_10px_rgba(211,0,197,0.5)]"
+                ></i>
+                <h3 class="font-display text-xl font-bold mb-3 text-white">
+                  Data Intelligence
+                </h3>
+                <p class="text-gray-400 text-sm">
+                  Extracting meaningful patterns from chaos. Machine learning
+                  models applied to raw experimental data.
+                </p>
+              </div>
+            </div>
+            <!-- Card 3 -->
+            <div
+              class="gsap-fade-up tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect"
+            >
+              <div class="tilt-card-content flex flex-col items-start h-full">
+                <i
+                  class="fas fa-vr-cardboard text-4xl text-neon-pink mb-6 tilt-icon drop-shadow-[0_0_10px_rgba(255,42,109,0.5)]"
+                ></i>
+                <h3 class="font-display text-xl font-bold mb-3 text-white">
+                  Creative Engineering
+                </h3>
+                <p class="text-gray-400 text-sm">
+                  Building interactive web interfaces that visualize scientific
+                  concepts with beauty and precision.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section (Modified Layout) -->
+      <section
+        id="about"
+        class="py-20 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden"
+      >
+        <div class="max-w-7xl mx-auto">
+          <h2 class="font-display text-4xl font-bold mb-16 text-center">
+            <span class="text-neon-pink">01.</span> About Me
+          </h2>
+
+          <!-- Split Row: Image Left / Text Right -->
+          <div class="flex flex-col lg:flex-row gap-12 items-center mb-16">
+            <!-- Left: Profile Image Circle with Transient Effect (Slides Left->Right) -->
+            <div class="w-full lg:w-1/3 flex justify-center about-img-anim">
+              <div class="relative w-64 h-64 md:w-80 md:h-80 group">
+                <!-- Rotating Neon Ring -->
+                <div
+                  class="absolute inset-0 rounded-full border-2 border-transparent border-t-neon-pink border-r-neon-purple animate-spin-slow opacity-80"
+                ></div>
+                <div
+                  class="absolute inset-2 rounded-full border border-white/10"
+                ></div>
+
+                <!-- Main Image Container -->
+                <div
+                  class="transient-circle transient-glow w-full h-full rounded-full overflow-hidden border-4 border-black relative"
+                >
+                  <img
+                    src="nk_pic.jpg"
+                    alt="NK Profile"
+                    class="w-full h-full object-cover transition-all duration-700"
+                  />
+
+                  <!-- Overlay -->
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+                  ></div>
+                </div>
+
+                <!-- Decorative Orbiting Elements -->
+                <div
+                  class="absolute top-0 right-0 w-4 h-4 bg-cyan-bright rounded-full blur-[2px] animate-pulse"
+                ></div>
+                <div
+                  class="absolute bottom-4 left-4 w-2 h-2 bg-galaxy-gold rounded-full blur-[1px]"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Right: Biography Details (Slides Right->Left) -->
+            <div class="w-full lg:w-2/3 about-text-anim">
+              <div
+                class="glass-card p-8 md:p-10 rounded-2xl border-l-4 border-l-neon-pink h-full relative overflow-hidden"
+              >
+                <!-- Background accent -->
+                <div
+                  class="absolute -right-10 -top-10 w-40 h-40 bg-neon-pink/10 rounded-full blur-3xl"
+                ></div>
+
+                <h3
+                  class="text-3xl font-bold mb-6 text-white flex items-center relative z-10"
+                >
+                  <i class="fas fa-terminal text-neon-pink mr-4 text-xl"></i>
+                  The Physicist Who Codes
+                </h3>
+                <div
+                  class="space-y-4 text-gray-300 leading-relaxed text-lg relative z-10"
+                >
+                  <p>
+                    I am a
+                    <span class="text-white font-medium"
+                      >Physics Honours graduate</span
+                    >
+                    with a burning passion for Computer Science. My journey
+                    began with a telescope in one hand and a keyboard in the
+                    other. I realized early on that the future of scientific
+                    discovery lies in the ability to simulate the universe.
+                  </p>
+                  <p>
+                    Today, I blend rigorous mathematical analysis with modern
+                    full-stack development. Whether it's optimizing an algorithm
+                    or centering a div, I apply the first principles of thinking
+                    to every problem I solve.
+                  </p>
+                  <div class="pt-4 flex flex-wrap gap-3">
+                    <span
+                      class="px-3 py-1 text-xs font-mono border border-neon-pink/30 text-neon-pink rounded bg-neon-pink/5"
+                      >Problem Solver</span
+                    >
+                    <span
+                      class="px-3 py-1 text-xs font-mono border border-cyan-bright/30 text-cyan-bright rounded bg-cyan-bright/5"
+                      >Researcher</span
+                    >
+                    <span
+                      class="px-3 py-1 text-xs font-mono border border-galaxy-gold/30 text-galaxy-gold rounded bg-galaxy-gold/5"
+                      >Innovator</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Future Horizon (Fades Up) -->
+          <div class="w-full about-horizon-anim">
+            <div
+              class="glass-card p-8 rounded-2xl border-l-4 border-l-neon-purple flex flex-col md:flex-row items-center justify-between gap-8"
+            >
+              <div class="md:w-1/3">
+                <h3
+                  class="text-2xl font-bold mb-2 text-white flex items-center"
+                >
+                  <i class="fas fa-globe-americas text-neon-purple mr-3"></i>
+                  Future Horizon
+                </h3>
+                <p class="text-gray-400 text-sm">Where I'm heading next.</p>
+              </div>
+
+              <div class="md:w-2/3 w-full">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div
+                    class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-colors group"
+                  >
+                    <i
+                      class="fas fa-rocket text-neon-purple mb-2 group-hover:scale-110 transition-transform block"
+                    ></i>
+                    <span class="text-sm text-gray-300 font-bold"
+                      >Astrophysics Tools</span
+                    >
+                  </div>
+                  <div
+                    class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-colors group"
+                  >
+                    <i
+                      class="fas fa-project-diagram text-neon-purple mb-2 group-hover:scale-110 transition-transform block"
+                    ></i>
+                    <span class="text-sm text-gray-300 font-bold"
+                      >Quantum Algos</span
+                    >
+                  </div>
+                  <div
+                    class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-colors group"
+                  >
+                    <i
+                      class="fas fa-dna text-neon-purple mb-2 group-hover:scale-110 transition-transform block"
+                    ></i>
+                    <span class="text-sm text-gray-300 font-bold"
+                      >DeSci Platforms</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section
+        id="skills"
+        class="py-20 px-4 sm:px-6 lg:px-8 bg-black/40 z-10 relative"
+      >
+        <div class="max-w-7xl mx-auto">
+          <h2 class="font-display text-4xl font-bold mb-12 text-center">
+            <span class="text-cyan-bright">02.</span> Qualifications & Tech
+          </h2>
+
+          <!-- EDUCATION CARDS -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24 mt-12">
+            <!-- Card 1: Physics -->
+            <div
+              class="edu-card"
+              style="
+                --hover-color: #ffd700;
+                --hover-glow: rgba(255, 215, 0, 0.2);
+              "
+            >
+              <div class="edu-imgbx">
+                <i
+                  class="fas fa-atom text-6xl text-galaxy-gold animate-pulse"
+                ></i>
+              </div>
+              <div class="edu-content">
+                <h2>B.Sc. Physics (Honours)</h2>
+                <span class="subtitle">University of Delhi (ARSD College)</span>
+                <div
+                  class="inline-block px-3 py-1 bg-galaxy-gold/20 text-galaxy-gold rounded-full text-xs font-mono mb-2"
+                >
+                  2022 - 2025
+                </div>
+                <p>
+                  Specialized in Quantum Mechanics, Statistical Thermodynamics,
+                  and Computational Physics. Graduated with distinction.
+                </p>
+              </div>
+            </div>
+
+            <!-- Card 2: Data Science -->
+            <div
+              class="edu-card"
+              style="
+                --hover-color: #d300c5;
+                --hover-glow: rgba(211, 0, 197, 0.2);
+              "
+            >
+              <div class="edu-imgbx">
+                <i
+                  class="fas fa-circle-nodes text-6xl text-neon-purple animate-pulse"
+                ></i>
+              </div>
+              <div class="edu-content">
+                <h2>Data Science and Application</h2>
+                <span class="subtitle"
+                  >Indian Institute of Technology Madras</span
+                >
+                <div
+                  class="inline-block px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-xs font-mono mb-2"
+                >
+                  2024
+                </div>
+                <p>
+                  Comprehensive training in Python, SQL, Machine Learning
+                  pipelines, and advanced Data Visualization techniques.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tech Stack Grid -->
+          <h3
+            class="text-center text-gray-400 font-mono text-sm mb-8 tracking-widest"
+          >
+            COMMAND LINE ARSENAL
+          </h3>
+          <div
+            class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6 text-center"
+          >
+            <!-- Tech Items -->
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-python-plain text-4xl mb-2 text-gray-500 group-hover:text-yellow-400 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">Python</p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-cplusplus-plain text-4xl mb-2 text-gray-500 group-hover:text-blue-500 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">C++</p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-javascript-plain text-4xl mb-2 text-gray-500 group-hover:text-yellow-300 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">
+                JavaScript
+              </p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-react-original text-4xl mb-2 text-gray-500 group-hover:text-cyan-400 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">React</p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-tailwindcss-plain text-4xl mb-2 text-gray-500 group-hover:text-cyan-bright transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">
+                Tailwind
+              </p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-latex-original text-4xl mb-2 text-gray-500 group-hover:text-white transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">LaTeX</p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-mysql-plain text-4xl mb-2 text-gray-500 group-hover:text-blue-400 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">MySQL</p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="fas fa-chart-pie text-4xl mb-2 text-gray-500 group-hover:text-yellow-500 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">
+                PowerBI
+              </p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-git-plain text-4xl mb-2 text-gray-500 group-hover:text-red-500 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">Git</p>
+            </div>
+            <div class="tech-item gsap-stagger group cursor-default">
+              <i
+                class="devicon-matlab-plain text-4xl mb-2 text-gray-500 group-hover:text-orange-500 transition-colors"
+              ></i>
+              <p class="text-xs text-gray-500 group-hover:text-white">MATLAB</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section
+        id="contact"
+        class="py-24 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col justify-center relative z-10"
+      >
+        <div class="max-w-7xl mx-auto w-full">
+          <h2 class="font-display text-4xl font-bold mb-4 text-center">
+            <span class="text-galaxy-gold">03.</span> Social Connect
+          </h2>
+          <p class="text-center text-gray-400 mb-16">
+            Connect on frequencies across the web.
+          </p>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <!-- Contact Tiles -->
+            <a
+              href="https://github.com/NIKHILKAUSHIK9"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fab fa-github text-5xl text-white mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >GITHUB</span
+                >
+              </div>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/nikhilkaushik9"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fab fa-linkedin text-5xl text-blue-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >LINKEDIN</span
+                >
+              </div>
+            </a>
+            <a
+              href="mailto:nkaushik3535@gmail.com"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fas fa-envelope text-5xl text-red-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(248,113,113,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >EMAIL</span
+                >
+              </div>
+            </a>
+            <a
+              href="https://discord.com/users/nikhilkaushik9/"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fab fa-discord text-5xl text-indigo-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(129,140,248,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >DISCORD</span
+                >
+              </div>
+            </a>
+            <a
+              href="https://www.instagram.com/nikhil_kaushik9/"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fab fa-instagram text-5xl text-pink-500 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(236,72,153,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >INSTAGRAM</span
+                >
+              </div>
+            </a>
+            <a
+              href="https://www.youtube.com/@nikhilkaushik9"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fab fa-youtube text-5xl text-red-600 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(220,38,38,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >YOUTUBE</span
+                >
+              </div>
+            </a>
+            <a
+              href="https://www.canva.com/settings/your-account"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fas fa-palette text-5xl text-cyan-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >CANVA</span
+                >
+              </div>
+            </a>
+            <a
+              href="https://m.facebook.com/profile.php?id=100069334432220&name=xhp_nt__fb__action__open_user"
+              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
+            >
+              <div
+                class="tilt-card-content h-full flex flex-col items-center justify-center"
+              >
+                <i
+                  class="fab fa-facebook text-5xl text-blue-600 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(37,99,235,0.5)]"
+                ></i>
+                <span
+                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
+                  >FACEBOOK</span
+                >
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-t-neon-pink/30 glass-panel bg-black/80 backdrop-blur-md pt-12 pb-8"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <!-- Brand -->
+          <div class="col-span-1">
+            <span class="font-display font-bold text-3xl tracking-tighter">
+              <span class="text-white">NK</span
+              ><span class="text-galaxy-gold">.</span>
+            </span>
+            <p class="text-gray-500 text-sm mt-4">
+              Exploring the universe, one line of code at a time.
+            </p>
+          </div>
+          <!-- Links -->
+          <div class="col-span-1">
+            <h4
+              class="text-white font-bold mb-4 uppercase tracking-wider text-sm"
+            >
+              Navigation
+            </h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li>
+                <a href="#home" class="hover:text-cyan-bright transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#about"
+                  class="hover:text-cyan-bright transition-colors"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#skills"
+                  class="hover:text-cyan-bright transition-colors"
+                  >Skills</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  class="hover:text-cyan-bright transition-colors"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Socials -->
+          <div class="col-span-1">
+            <h4
+              class="text-white font-bold mb-4 uppercase tracking-wider text-sm"
+            >
+              Socials
+            </h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/nikhilkaushik9"
+                  class="hover:text-neon-pink transition-colors"
+                  >LinkedIn</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/NIKHILKAUSHIK9"
+                  class="hover:text-neon-pink transition-colors"
+                  >GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://twitter.com/NIKHIL_KAUSHIK9"
+                  class="hover:text-neon-pink transition-colors"
+                  >Twitter</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Contact -->
+          <div class="col-span-1">
+            <h4
+              class="text-white font-bold mb-4 uppercase tracking-wider text-sm"
+            >
+              Contact Info
+            </h4>
+            <p class="text-gray-400 text-sm">Delhi, India</p>
+            <p class="text-gray-400 text-sm">nkaushik3535@gmail.com</p>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 text-center">
+          <p class="text-gray-600 text-xs">
+            &copy; 2026 NK Physics Portfolio. Built with Starlight & Code.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // --- 1. SUPERMASSIVE BLACK HOLE ANIMATION (INTERSTELLAR STYLE) ---
+      const initBlackHole = () => {
+        const container = document.getElementById("blackhole-container");
+        const scene = new THREE.Scene();
+
+        // Camera setup - Updated FOV for scale
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000,
+        );
+        camera.position.z = 2.5;
+        camera.position.y = 0;
+        camera.lookAt(0, 0, 0);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          antialias: true,
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.domElement.id = "blackhole-canvas";
+        container.appendChild(renderer.domElement);
+
+        // WRAPPER GROUP FOR SCROLL ANIMATION
+        const scrollGroup = new THREE.Group();
+        scene.add(scrollGroup);
+
+        // Group to hold all black hole components
+        const blackHoleGroup = new THREE.Group();
+        scrollGroup.add(blackHoleGroup);
+
+        // 1. EVENT HORIZON (The Black Sphere)
+        const eventHorizonGeo = new THREE.SphereGeometry(1, 64, 64);
+        const eventHorizonMat = new THREE.MeshBasicMaterial({
+          color: 0x000000,
+        });
+        const eventHorizon = new THREE.Mesh(eventHorizonGeo, eventHorizonMat);
+        blackHoleGroup.add(eventHorizon);
+
+        // 2. ACCRETION DISK (The Glowing Ring)
+        const canvas = document.createElement("canvas");
+        canvas.width = 512;
+        canvas.height = 512;
+        const context = canvas.getContext("2d");
+
+        const gradient = context.createRadialGradient(
+          256,
+          256,
+          100,
+          256,
+          256,
+          256,
+        );
+        gradient.addColorStop(0, "rgba(255, 255, 255, 0)");
+        gradient.addColorStop(0.3, "rgba(255, 200, 50, 1)");
+        gradient.addColorStop(0.5, "rgba(255, 100, 0, 0.8)");
+        gradient.addColorStop(0.8, "rgba(100, 0, 0, 0.4)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 512, 512);
+
+        for (let i = 0; i < 100; i++) {
+          context.beginPath();
+          context.arc(256, 256, 120 + Math.random() * 120, 0, Math.PI * 2);
+          context.strokeStyle = `rgba(255, ${Math.floor(Math.random() * 150)}, 0, ${Math.random() * 0.3})`;
+          context.lineWidth = Math.random() * 5;
+          context.stroke();
+        }
+
+        const diskTexture = new THREE.CanvasTexture(canvas);
+        const diskGeo = new THREE.RingGeometry(1.2, 4.0, 64, 8);
+        const diskMat = new THREE.MeshBasicMaterial({
+          map: diskTexture,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.9,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+
+        const accretionDisk = new THREE.Mesh(diskGeo, diskMat);
+        accretionDisk.rotation.x = Math.PI / 2;
+        blackHoleGroup.add(accretionDisk);
+
+        // 3. GRAVITATIONAL LENSING HALO
+        const haloGeo = new THREE.RingGeometry(1.2, 1.45, 64);
+        const haloMat = new THREE.MeshBasicMaterial({
+          color: 0xffaa00,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.4,
+          blending: THREE.AdditiveBlending,
+        });
+        const halo = new THREE.Mesh(haloGeo, haloMat);
+        halo.rotation.y = 0;
+        halo.lookAt(camera.position);
+        blackHoleGroup.add(halo);
+
+        // 4. PARTICLE SYSTEM
+        const particlesGeo = new THREE.BufferGeometry();
+        const particleCount = 3000;
+        const posArray = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+          const angle = Math.random() * Math.PI * 2;
+          const radius = 1.5 + Math.random() * 20;
+          const spread = (Math.random() - 0.5) * 1.5;
+
+          posArray[i] = Math.cos(angle) * radius;
+          posArray[i + 1] = spread;
+          posArray[i + 2] = Math.sin(angle) * radius;
+        }
+
+        particlesGeo.setAttribute(
+          "position",
+          new THREE.BufferAttribute(posArray, 3),
+        );
+
+        const particlesMat = new THREE.PointsMaterial({
+          size: 0.04,
+          color: 0xffaa00,
+          transparent: true,
+          opacity: 0.6,
+          blending: THREE.AdditiveBlending,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+        blackHoleGroup.add(particlesMesh);
+
+        // Tilt to see the top better
+        blackHoleGroup.rotation.x = 0.5;
+        blackHoleGroup.rotation.z = 0.2;
+
+        // --- SCROLL ANIMATION LOGIC ---
+        // Calculate screen edge
+        const getEdgePosition = () => {
+          const dist = camera.position.z;
+          const vFOV = THREE.Math.degToRad(camera.fov);
+          const height = 2 * Math.tan(vFOV / 2) * dist;
+          const width = height * camera.aspect;
+          return width / 2;
+        };
+
+        // Set initial position immediately to prevent center flash
+        scrollGroup.position.x = -getEdgePosition();
+
+        // 1. Move Black Hole Left -> Right (Fixed using fromTo to prevent jumps)
+        gsap.fromTo(
+          scrollGroup.position,
+          { x: () => -getEdgePosition() }, // Start: Left Edge
+          {
+            x: () => getEdgePosition(), // End: Right Edge
+            ease: "none",
+            scrollTrigger: {
+              trigger: "body",
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 1.5,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+
+        // 2. Rotate Black Hole (Rolling Effect)
+        gsap.to(blackHoleGroup.rotation, {
+          y: Math.PI * 4,
+          z: -0.8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1.5,
+          },
+        });
+
+        // 3. Move Background Stars (Parallax - Opposite Direction)
+        gsap.to("#cosmic-canvas", {
+          xPercent: -10, // Move canvas left
+          ease: "none",
+          scrollTrigger: {
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1.5,
+          },
+        });
+
+        // ANIMATION LOOP
+        const animate = () => {
+          requestAnimationFrame(animate);
+
+          accretionDisk.rotation.z -= 0.005;
+          particlesMesh.rotation.y -= 0.001;
+          // Wobble inside the group
+          blackHoleGroup.rotation.x =
+            0.5 + Math.sin(Date.now() * 0.0005) * 0.05;
+
+          halo.lookAt(camera.position);
+
+          renderer.render(scene, camera);
+        };
+
+        animate();
+
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+
+          if (window.innerWidth < 768) {
+            camera.position.z = 4.0;
+          } else {
+            camera.position.z = 2.5;
+          }
+        });
+      };
+
+      window.addEventListener("load", initBlackHole);
+
+      // --- 2. COSMIC DUST BACKGROUND ---
+      const canvas = document.getElementById("cosmic-canvas");
+      const ctx = canvas.getContext("2d");
+
+      let width, height;
+      let stars = [];
+
+      const initCanvas = () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        stars = [];
+        createStars();
+      };
+
+      const createStars = () => {
+        const starCount = Math.floor((width * height) / 4000);
+        for (let i = 0; i < starCount; i++) {
+          stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size: Math.random() * 1.5,
+            speed: Math.random() * 0.2 + 0.05,
+            opacity: Math.random() * 0.8,
+          });
+        }
+      };
+
+      const animateCanvas = () => {
+        ctx.clearRect(0, 0, width, height);
+
+        stars.forEach((star) => {
+          star.x += star.speed;
+          if (star.x > width) {
+            star.x = 0;
+            star.y = Math.random() * height;
+          }
+
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animateCanvas);
+      };
+
+      window.addEventListener("resize", initCanvas);
+      initCanvas();
+      animateCanvas();
+
+      // --- 3. GSAP ANIMATIONS (Standard) ---
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+      // Navbar ScrollSpy & Active State
+      const sections = document.querySelectorAll("section");
+      const navLinks = document.querySelectorAll(".nav-link");
+
+      window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          if (scrollY >= sectionTop - 200) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        navLinks.forEach((link) => {
+          link.classList.remove("text-white", "font-bold");
+          link.querySelector("span").classList.remove("w-full");
+          link.querySelector("span").classList.add("w-0");
+
+          if (link.getAttribute("href").includes(current)) {
+            link.classList.add("text-white", "font-bold");
+            link.querySelector("span").classList.remove("w-0");
+            link.querySelector("span").classList.add("w-full");
+          }
+        });
+      });
+
+      // Hero Fade In
+      gsap.from("#home h1, #home p, #home button", {
+        duration: 1.5,
+        y: 50,
+        opacity: 0,
+        stagger: 0.2,
+        ease: "power3.out",
+        delay: 0.5,
+      });
+
+      // Cards Fade Up
+      gsap.utils.toArray(".gsap-fade-up").forEach((element) => {
+        gsap.from(element, {
+          scrollTrigger: {
+            trigger: element,
+            start: "top 85%",
+          },
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out",
+        });
+      });
+
+      // --- UPDATED ABOUT ME ANIMATIONS ---
+
+      // 1. Image: Slides Left -> Right
+      gsap.from(".about-img-anim", {
+        scrollTrigger: {
+          trigger: "#about",
+          start: "top 70%",
+        },
+        x: -100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+      });
+
+      // 2. Text: Slides Right -> Left
+      gsap.from(".about-text-anim", {
+        scrollTrigger: {
+          trigger: "#about",
+          start: "top 70%",
+        },
+        x: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        delay: 0.2,
+      });
+
+      // 3. Future Horizon: Fades Up from Bottom
+      gsap.from(".about-horizon-anim", {
+        scrollTrigger: {
+          trigger: ".about-horizon-anim",
+          start: "top 90%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power2.out",
+        delay: 0.4,
+      });
+
+      // Tech Stack Stagger
+      gsap.from(".tech-item", {
+        scrollTrigger: { trigger: "#skills", start: "top 75%" },
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "back.out(1.7)",
+      });
+
+      // --- 4. 3D TILT ENGINE (Cards) ---
+      const tiltCards = document.querySelectorAll(".tilt-card");
+
+      tiltCards.forEach((card) => {
+        card.addEventListener("mousemove", (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const rotateX = ((y - centerY) / centerY) * -15;
+          const rotateY = ((x - centerX) / centerX) * 15;
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener("mouseleave", () => {
+          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+      });
+
+      // --- 5. MOBILE MENU LOGIC ---
+      const btn = document.getElementById("mobile-menu-btn");
+      const menu = document.getElementById("mobile-menu");
+      const mobileLinks = document.querySelectorAll(".mobile-link");
+
+      btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+      });
+
+      mobileLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          menu.classList.add("hidden");
+        });
+      });
+    </script>
+  </body>
+</html>

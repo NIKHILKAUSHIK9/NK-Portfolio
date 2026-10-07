@@ -3,29 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NK Portfolio</title>
+    <meta name="theme-color" content="#000000" />
+    <title>Nikhil Kaushik | Computational Astrophysics · AI/ML</title>
+    <meta name="description" content="Nikhil Kaushik — M.Sc. Physics student at IIT Roorkee. Computational astrophysics, Gaia DR3 open-cluster analysis, Python pipelines and AI/ML." />
+    <meta property="og:title" content="Nikhil Kaushik | Portfolio" />
+    <meta property="og:description" content="Physics · Programming · Singularity — computational astrophysics and AI/ML." />
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
 
-    <!-- FontAwesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-
-    <!-- Devicon -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css"
-    />
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -34,6 +23,7 @@
             fontFamily: {
               sans: ["Outfit", "sans-serif"],
               display: ["Space Grotesk", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
             },
             colors: {
               void: "#000000",
@@ -41,1585 +31,963 @@
               "neon-purple": "#d300c5",
               "cyan-bright": "#05d9e8",
               "galaxy-gold": "#ffaa00",
-              "glass-border": "rgba(255, 255, 255, 0.1)",
-              "fade-blue": "#0f172a",
             },
-            backgroundImage: {
-              "glass-gradient":
-                "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)",
-            },
-            animation: {
-              "spin-slow": "spin 10s linear infinite",
-            },
+            animation: { "spin-slow": "spin 10s linear infinite" },
           },
         },
       };
     </script>
 
-    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-
-    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
-      /* Custom Styles & Utilities */
-      body {
-        background-color: #000000;
-        color: #e2e8f0;
-        overflow-x: hidden;
-        min-height: 100vh;
-      }
+      html { scroll-behavior: smooth; }
+      section[id] { scroll-margin-top: 80px; }
+      body { background:#000; color:#e2e8f0; overflow-x:hidden; min-height:100vh; }
+      body.has-cursor, body.has-cursor a, body.has-cursor button { cursor:none; }
 
-      /* Canvas Background (Stars) */
-      #cosmic-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 120%; /* Wider to allow parallax movement */
-        height: 100%;
-        z-index: -2;
-        opacity: 0.6;
-        left: -10%; /* Start slightly off-center for movement range */
-      }
+      /* ---------- Loader ---------- */
+      #loader { position:fixed; inset:0; z-index:10000; background:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; transition:opacity .7s ease, visibility .7s ease; }
+      #loader.done { opacity:0; visibility:hidden; }
+      .loader-orb { width:64px; height:64px; border-radius:50%; background:#000; box-shadow:0 0 0 3px #ffaa00, 0 0 40px 8px rgba(255,170,0,.45), inset 0 0 20px rgba(255,100,0,.6); animation:pulse-orb 1.6s ease-in-out infinite; }
+      @keyframes pulse-orb { 50% { box-shadow:0 0 0 3px #ff2a6d, 0 0 70px 14px rgba(255,42,109,.45), inset 0 0 20px rgba(211,0,197,.6); } }
+      .loader-bar { width:200px; height:2px; background:rgba(255,255,255,.1); overflow:hidden; border-radius:2px; }
+      .loader-bar::after { content:""; display:block; height:100%; width:40%; background:linear-gradient(90deg,#ff2a6d,#ffaa00); animation:load-slide 1.2s ease-in-out infinite; }
+      @keyframes load-slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
 
-      /* Black Hole Container */
-      #blackhole-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        pointer-events: none;
-      }
+      /* ---------- Backgrounds ---------- */
+      #cosmic-canvas { position:fixed; top:0; left:-10%; width:120%; height:100%; z-index:-2; opacity:.6; }
+      #blackhole-container { position:fixed; inset:0; z-index:-1; pointer-events:none; }
+      #blackhole-canvas { width:100% !important; height:100% !important; display:block; }
+      .vignette { position:fixed; inset:0; background:radial-gradient(circle, transparent 60%, #000 100%); z-index:-1; pointer-events:none; }
 
-      #blackhole-canvas {
-        width: 100% !important;
-        height: 100% !important;
-        display: block;
-      }
+      /* ---------- Glass ---------- */
+      .glass-panel { background:rgba(10,10,10,.6); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.08); }
+      .glass-card { background:linear-gradient(135deg, rgba(30,30,30,.45) 0%, rgba(10,10,10,.3) 100%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.06); transition:border-color .4s, box-shadow .4s, transform .4s; }
+      .glass-card:hover { border-color:rgba(255,170,0,.3); box-shadow:0 0 28px rgba(255,170,0,.1); }
 
-      /* Vignette Overlay */
-      .vignette {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, transparent 60%, #000000 100%);
-        z-index: -1;
-        pointer-events: none;
-      }
+      ::-webkit-scrollbar { width:8px; }
+      ::-webkit-scrollbar-track { background:#000; }
+      ::-webkit-scrollbar-thumb { background:#333; border-radius:4px; }
+      ::-webkit-scrollbar-thumb:hover { background:#ffaa00; }
 
-      /* Glassmorphism Classes */
-      .glass-panel {
-        background: rgba(10, 10, 10, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
+      /* ---------- Reveal (uses `translate`, independent of tilt `transform`) ---------- */
+      .rv { opacity:0; translate:0 36px; transition:opacity .8s ease, translate .8s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d,0s); }
+      .rv.in { opacity:1; translate:0 0; }
+      .rv-l { translate:-60px 0; } .rv-r { translate:60px 0; }
 
-      .glass-card {
-        background: linear-gradient(
-          135deg,
-          rgba(30, 30, 30, 0.3) 0%,
-          rgba(10, 10, 10, 0.1) 100%
-        );
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      }
+      /* ---------- Tilt ---------- */
+      .tilt-card { position:relative; transform-style:preserve-3d; transform:perspective(1000px); background:rgba(20,20,20,.45); border:1px solid rgba(255,255,255,.05); overflow:hidden; transition:background .3s, box-shadow .3s, border-color .3s; }
+      .tilt-card:hover { background:rgba(0,0,0,.85); }
+      .tilt-card-content { transform:translateZ(40px); transform-style:preserve-3d; pointer-events:none; }
+      .tilt-icon { transition:transform .3s cubic-bezier(.34,1.56,.64,1); display:inline-block; }
+      .tilt-card:hover .tilt-icon { transform:scale(1.2) translateZ(20px); }
 
-      .glass-card:hover {
-        border-color: rgba(255, 170, 0, 0.3);
-        background: linear-gradient(
-          135deg,
-          rgba(40, 40, 40, 0.4) 0%,
-          rgba(20, 20, 20, 0.2) 100%
-        );
-        box-shadow: 0 0 20px rgba(255, 170, 0, 0.1);
-      }
+      @keyframes border-rotate { from{transform:translate(-50%,-50%) rotate(0)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+      .neon-border-effect { position:relative; isolation:isolate; }
+      .neon-border-effect::after { content:""; position:absolute; top:50%; left:50%; width:250%; height:250%; background:conic-gradient(transparent 80%, #ffaa00 90%, transparent 100%); transform:translate(-50%,-50%); z-index:-1; opacity:0; transition:opacity .5s; pointer-events:none; }
+      .neon-border-effect:hover::after { opacity:.5; animation:border-rotate 4s linear infinite; }
 
-      /* 3D TILT ENGINE */
-      .tilt-card {
-        position: relative;
-        transform-style: preserve-3d;
-        transform: perspective(1000px);
-        background: rgba(20, 20, 20, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        overflow: hidden;
-        transition: background 0.3s ease;
-      }
+      /* ---------- Hero ---------- */
+      .float-icon { animation:floating 6s ease-in-out infinite; }
+      @keyframes floating { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-20px) rotate(10deg)} }
+      .hero-text-glow { text-shadow:0 0 40px rgba(0,0,0,.9), 0 0 10px rgba(0,0,0,.7); background:radial-gradient(closest-side, rgba(0,0,0,.5), transparent); }
+      .animate-gradient { background-size:200% auto; animation:gradient 3s linear infinite; }
+      @keyframes gradient { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+      .typed-cursor { color:#ffaa00; animation:blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity:0; } }
+      .chip { font-family:"JetBrains Mono",monospace; font-size:.72rem; letter-spacing:.04em; padding:.35rem .8rem; border-radius:9999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#cbd5e1; backdrop-filter:blur(6px); }
 
-      .tilt-card:hover {
-        background: #000000;
-      }
+      /* ---------- Section header ---------- */
+      .section-number { font-family:"JetBrains Mono",monospace; font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; }
 
-      .tilt-card-content {
-        transform: translateZ(50px);
-        transform-style: preserve-3d;
-        pointer-events: none;
-      }
+      /* ---------- Profile ring ---------- */
+      .transient-circle { position:relative; z-index:10; }
+      .transient-circle::before { content:""; position:absolute; inset:-4px; border-radius:50%; padding:4px; background:conic-gradient(from 0deg, transparent, #ff2a6d, #d300c5, transparent); -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; animation:rotate-ring 4s linear infinite; }
+      @keyframes rotate-ring { to { transform:rotate(360deg); } }
+      .transient-glow { box-shadow:0 0 30px rgba(255,42,109,.3), inset 0 0 20px rgba(211,0,197,.2); }
+      @keyframes orbit { from{transform:rotate(0) translateX(150px) rotate(0)} to{transform:rotate(360deg) translateX(150px) rotate(-360deg)} }
+      @keyframes orbit2 { from{transform:rotate(120deg) translateX(110px) rotate(-120deg)} to{transform:rotate(480deg) translateX(110px) rotate(-480deg)} }
+      .orbit-dot { position:absolute; top:50%; left:50%; margin:-6px 0 0 -6px; width:12px; height:12px; border-radius:50%; animation:orbit 8s linear infinite; }
+      .orbit-dot-2 { position:absolute; top:50%; left:50%; margin:-4px 0 0 -4px; width:8px; height:8px; border-radius:50%; animation:orbit2 5s linear infinite; }
 
-      .tilt-icon {
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        display: inline-block;
-      }
+      /* ---------- Stat + info ---------- */
+      .stat-card { border-radius:16px; padding:1.6rem 1rem; text-align:center; position:relative; overflow:hidden; }
+      .stat-card::after { content:""; position:absolute; bottom:0; left:0; right:0; height:3px; background:var(--c,#ffaa00); transform:scaleX(0); transition:transform .4s; }
+      .stat-card:hover::after { transform:scaleX(1); }
+      .info-cell { border-left:2px solid var(--c,#ff2a6d); padding:.2rem 0 .2rem .9rem; }
+      .info-cell h5 { font-family:"JetBrains Mono",monospace; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:#6b7280; }
+      .info-cell p { color:#fff; font-weight:500; }
 
-      .tilt-card:hover .tilt-icon {
-        transform: scale(1.2) translateZ(20px);
-      }
+      /* ---------- Timeline ---------- */
+      .tl { position:relative; padding-left:2rem; }
+      .tl::before { content:""; position:absolute; left:7px; top:6px; bottom:6px; width:2px; background:linear-gradient(to bottom, #ff2a6d, #d300c5, #ffaa00, transparent); }
+      .tl-item { position:relative; }
+      .tl-dot { position:absolute; left:-2rem; top:1.4rem; width:16px; height:16px; border-radius:50%; border:3px solid var(--c,#ffaa00); background:#000; box-shadow:0 0 10px var(--c,#ffaa00); }
+      .date-chip { font-family:"JetBrains Mono",monospace; font-size:.7rem; letter-spacing:.06em; padding:.2rem .7rem; border-radius:9999px; border:1px solid var(--c,#ffaa00); color:var(--c,#ffaa00); background:rgba(255,255,255,.02); display:inline-block; }
 
-      /* Neon Border Circle Animation */
-      @keyframes border-rotate {
-        from {
-          transform: translate(-50%, -50%) rotate(0deg);
-        }
-        to {
-          transform: translate(-50%, -50%) rotate(360deg);
-        }
-      }
+      /* ---------- Cards ---------- */
+      .project-card { border-radius:16px; position:relative; overflow:hidden; transition:transform .4s, border-color .4s, box-shadow .4s; }
+      .project-card:hover { transform:translateY(-8px); border-color:rgba(255,170,0,.28); box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,170,0,.08); }
+      .tag { font-size:.68rem; padding:2px 10px; border-radius:9999px; border:1px solid; font-family:"JetBrains Mono",monospace; letter-spacing:.05em; }
 
-      .neon-border-effect {
-        position: relative;
-        isolation: isolate;
-      }
+      /* ---------- Pipeline flow ---------- */
+      .flow { display:flex; flex-wrap:wrap; align-items:stretch; gap:.6rem; }
+      .flow-step { flex:1 1 150px; border-radius:12px; padding:.9rem 1rem; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); position:relative; }
+      .flow-step b { font-family:"JetBrains Mono",monospace; font-size:.68rem; color:#05d9e8; letter-spacing:.1em; display:block; margin-bottom:.25rem; }
+      .flow-step span { font-size:.82rem; color:#cbd5e1; }
 
-      .neon-border-effect::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 250%;
-        height: 250%;
-        background: conic-gradient(
-          transparent 80%,
-          #ffaa00 90%,
-          transparent 100%
-        );
-        transform: translate(-50%, -50%);
-        z-index: -1;
-        opacity: 0;
-        transition: opacity 0.5s ease;
-        pointer-events: none;
-      }
+      /* ---------- Skills ---------- */
+      .skill-item { padding:14px 8px; border-radius:12px; border:1px solid transparent; transition:all .3s; text-align:center; }
+      .skill-item:hover { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1); transform:translateY(-4px); }
+      .skill-item i { font-size:2.2rem; color:#6b7280; transition:color .3s; display:block; margin-bottom:.4rem; }
+      .skill-item p { font-size:.75rem; color:#6b7280; transition:color .3s; }
+      .skill-item:hover p { color:#fff; }
 
-      .neon-border-effect:hover::after {
-        opacity: 0.5;
-        animation: border-rotate 4s linear infinite;
-      }
+      /* ---------- Terminal / form ---------- */
+      .terminal { font-family:"JetBrains Mono",monospace; font-size:.82rem; background:rgba(0,0,0,.7); border:1px solid rgba(5,217,232,.25); border-radius:14px; overflow:hidden; box-shadow:0 0 40px rgba(5,217,232,.06); }
+      .terminal-bar { background:rgba(255,255,255,.05); padding:.55rem 1rem; display:flex; align-items:center; gap:.4rem; font-size:.72rem; color:#6b7280; }
+      .terminal-bar i { width:10px; height:10px; border-radius:50%; display:inline-block; }
+      .terminal-body p { margin:.35rem 0; color:#9ca3af; }
+      .terminal-body .k { color:#05d9e8; } .terminal-body .v { color:#fff; }
+      .field { width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:.75rem 1rem; color:#fff; font-size:.9rem; outline:none; transition:border-color .3s, box-shadow .3s; }
+      .field:focus { border-color:#ffaa00; box-shadow:0 0 0 3px rgba(255,170,0,.12); }
+      .field::placeholder { color:#6b7280; }
+      .btn-glow { position:relative; overflow:hidden; transition:all .3s; }
+      .btn-glow::before { content:""; position:absolute; top:50%; left:50%; width:0; height:0; background:rgba(255,255,255,.2); border-radius:50%; transform:translate(-50%,-50%); transition:width .6s, height .6s; }
+      .btn-glow:hover::before { width:300px; height:300px; }
 
-      /* Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #000000;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #ffaa00;
-      }
 
-      /* Floating Icons Animation */
-      .float-icon {
-        animation: floating 6s ease-in-out infinite;
-      }
-      .float-delay-1 {
-        animation-delay: 0s;
-      }
-      .float-delay-2 {
-        animation-delay: 2s;
-      }
-      .float-delay-3 {
-        animation-delay: 4s;
-      }
+      /* ---------- Social links (pill structure from reference) ---------- */
+      .social-container { display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:40px; }
+      .social-container a { display:flex; align-items:center; gap:12px; padding:16px 28px; border-radius:100px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); color:#e2e8f0; transition:.35s; }
+      .social-container a:hover { transform:translateY(-5px); border-color:rgba(121,201,255,.3); }
+      .social-container i { color:#ffaa00; }
+      @media (max-width:640px) { .social-container { flex-direction:column; gap:14px; } .social-container a { padding:14px 22px; } }
 
-      @keyframes floating {
-        0% {
-          transform: translateY(0px) rotate(0deg);
-        }
-        50% {
-          transform: translateY(-20px) rotate(10deg);
-        }
-        100% {
-          transform: translateY(0px) rotate(0deg);
-        }
-      }
+      /* ---------- Cursor ---------- */
+      #cursor-dot, #cursor-ring { display:none; position:fixed; border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); }
+      body.has-cursor #cursor-dot, body.has-cursor #cursor-ring { display:block; }
+      #cursor-dot { width:10px; height:10px; background:#ffaa00; z-index:9999; mix-blend-mode:difference; transition:background .3s; }
+      #cursor-ring { width:36px; height:36px; border:2px solid rgba(255,170,0,.6); z-index:9998; transition:width .3s, height .3s, border-color .3s; }
+      .particle { position:fixed; pointer-events:none; border-radius:50%; z-index:9996; animation:particle-fade .8s ease-out forwards; }
+      @keyframes particle-fade { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(0)} }
 
-      /* --- EDUCATION CARD HOVER ANIMATION --- */
-      .edu-card {
-        position: relative;
-        width: 100%;
-        max-width: 380px;
-        height: 320px;
-        background: rgba(20, 20, 20, 0.4);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-        transition: 0.4s ease-out;
-        margin: 0 auto;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
+      #scroll-progress { position:fixed; top:0; left:0; height:3px; width:0; background:linear-gradient(90deg,#ff2a6d,#d300c5,#ffaa00,#05d9e8); z-index:9997; box-shadow:0 0 10px rgba(255,170,0,.5); }
+      .divider { width:100%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent); }
 
-      .edu-card:hover {
-        height: 420px;
-        background: #000000;
-        border-color: var(--hover-color);
-        box-shadow: 0 0 25px var(--hover-glow);
-      }
-
-      .edu-imgbx {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 280px;
-        height: 220px;
-        background: #0a0a0a;
-        border-radius: 12px;
-        overflow: hidden;
-        transition: 0.5s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 20;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .edu-card:hover .edu-imgbx {
-        top: -100px;
-        transform: translateX(-50%) scale(0.75);
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
-        border-color: var(--hover-color);
-      }
-
-      .edu-content {
-        position: absolute;
-        top: 260px;
-        width: 100%;
-        padding: 0 25px;
-        height: 40px;
-        overflow: hidden;
-        text-align: center;
-        transition: 0.5s;
-        opacity: 0.8;
-      }
-
-      .edu-card:hover .edu-content {
-        top: 140px;
-        height: 260px;
-        opacity: 1;
-      }
-
-      .edu-content h2 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 0.5rem;
-      }
-
-      .edu-content .subtitle {
-        font-size: 0.9rem;
-        color: var(--hover-color);
-        margin-bottom: 1rem;
-        display: block;
-        font-family: "Space Grotesk", sans-serif;
-      }
-
-      .edu-content p {
-        color: #ccc;
-        font-size: 0.85rem;
-        line-height: 1.5;
-      }
-
-      /* Hero Text Shadow */
-      .hero-text-glow {
-        text-shadow:
-          0 0 40px rgba(0, 0, 0, 0.9),
-          0 0 10px rgba(0, 0, 0, 0.7);
-        background: radial-gradient(
-          closest-side,
-          rgba(0, 0, 0, 0.5),
-          transparent
-        );
-      }
-
-      /* Gradient Animation */
-      .animate-gradient {
-        background-size: 200% auto;
-        animation: gradient 3s linear infinite;
-      }
-      @keyframes gradient {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
-      }
-
-      /* --- Transient Circle Effect --- */
-      .transient-circle {
-        position: relative;
-        z-index: 10;
-      }
-      .transient-circle::before {
-        content: "";
-        position: absolute;
-        inset: -4px;
-        border-radius: 50%;
-        padding: 4px;
-        background: conic-gradient(
-          from 0deg,
-          transparent,
-          #ff2a6d,
-          #d300c5,
-          transparent
-        );
-        -webkit-mask:
-          linear-gradient(#fff 0 0) content-box,
-          linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        animation: rotate-ring 4s linear infinite;
-      }
-      @keyframes rotate-ring {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      .transient-glow {
-        box-shadow:
-          0 0 30px rgba(255, 42, 109, 0.3),
-          inset 0 0 20px rgba(211, 0, 197, 0.2);
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+        .rv { opacity:1; translate:0 0; }
       }
     </style>
+    <noscript><style>.rv{opacity:1;translate:0 0}#loader{display:none}</style></noscript>
   </head>
-  <body
-    class="font-sans antialiased selection:bg-galaxy-gold selection:text-black"
-  >
-    <!-- Backgrounds -->
+
+  <body class="font-sans antialiased selection:bg-galaxy-gold selection:text-black">
+    <!-- Loader -->
+    <div id="loader">
+      <div class="loader-orb"></div>
+      <div class="loader-bar"></div>
+      <p class="font-mono text-xs tracking-[.3em] text-gray-500">INITIALIZING OBSERVATORY...</p>
+    </div>
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+    <div id="scroll-progress"></div>
+
     <canvas id="cosmic-canvas"></canvas>
-
-    <!-- 3D Black Hole Container -->
     <div id="blackhole-container"></div>
-
     <div class="vignette"></div>
 
-    <!-- Navigation -->
-    <nav
-      id="navbar"
-      class="fixed top-0 w-full z-50 transition-all duration-300 glass-panel border-b-0"
-    >
+    <!-- ================= NAV ================= -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 glass-panel border-b-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
-          <!-- Logo -->
-          <div
-            class="flex-shrink-0 cursor-pointer"
-            onclick="gsap.to(window, { duration: 1, scrollTo: '#home' })"
-          >
-            <span class="font-display font-bold text-3xl tracking-tighter">
-              <span class="text-galaxy-gold">NIKHIL KAUSHIK</span
-              ><span class="text-galaxy-gold"></span>
+          <a href="#home" class="flex-shrink-0">
+            <span class="font-display font-bold text-2xl tracking-tighter">
+              <span class="text-galaxy-gold">NK</span><span class="text-white/50">.</span>
+              <span class="text-white text-xs font-mono ml-2 hidden sm:inline tracking-widest">NIKHIL KAUSHIK</span>
             </span>
+          </a>
+          <div class="hidden lg:flex items-center space-x-1">
+            <a href="#home" class="nav-link text-gray-300 hover:text-galaxy-gold px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Home<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-galaxy-gold transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#about" class="nav-link text-gray-300 hover:text-neon-purple px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">About<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-neon-purple transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#research" class="nav-link text-gray-300 hover:text-cyan-bright px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Research<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-bright transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#experience" class="nav-link text-gray-300 hover:text-neon-pink px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Experience<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-neon-pink transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#projects" class="nav-link text-gray-300 hover:text-galaxy-gold px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Projects<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-galaxy-gold transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#skills" class="nav-link text-gray-300 hover:text-neon-purple px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Skills<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-neon-purple transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#activities" class="nav-link text-gray-300 hover:text-cyan-bright px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Leadership<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-bright transition-all duration-300 group-hover:w-full rounded"></span></a>
+            <a href="#contact" class="nav-link text-gray-300 hover:text-neon-pink px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group hover:bg-white/5">Contact<span class="nav-ul absolute bottom-0 left-0 w-0 h-0.5 bg-neon-pink transition-all duration-300 group-hover:w-full rounded"></span></a>
           </div>
-
-          <!-- Desktop Menu -->
-          <div class="hidden md:block">
-            <div class="ml-10 flex items-baseline space-x-8">
-              <a
-                href="#home"
-                class="nav-link text-gray-300 hover:text-galaxy-gold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
-              >
-                Home
-                <span
-                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-galaxy-gold transition-all duration-300 group-hover:w-full"
-                ></span>
-              </a>
-              <a
-                href="#about"
-                class="nav-link text-gray-300 hover:text-neon-purple px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
-              >
-                About
-                <span
-                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-neon-purple transition-all duration-300 group-hover:w-full"
-                ></span>
-              </a>
-              <a
-                href="#skills"
-                class="nav-link text-gray-300 hover:text-neon-pink px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
-              >
-                Skills
-                <span
-                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-neon-pink transition-all duration-300 group-hover:w-full"
-                ></span>
-              </a>
-              <a
-                href="#contact"
-                class="nav-link text-gray-300 hover:text-cyan-bright px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 relative group"
-              >
-                Contact
-                <span
-                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-bright transition-all duration-300 group-hover:w-full"
-                ></span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Mobile Menu Button -->
-          <div class="md:hidden">
-            <button
-              id="mobile-menu-btn"
-              class="text-gray-300 hover:text-white focus:outline-none"
-            >
-              <i class="fas fa-bars text-2xl"></i>
-            </button>
-          </div>
+          <button id="mobile-menu-btn" aria-label="Menu" class="lg:hidden text-gray-300 hover:text-white focus:outline-none"><i class="fas fa-bars text-2xl"></i></button>
         </div>
       </div>
-      <!-- Mobile Menu Panel -->
-      <div
-        id="mobile-menu"
-        class="hidden md:hidden glass-panel border-t border-gray-800"
-      >
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a
-            href="#home"
-            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10"
-            >Home</a
-          >
-          <a
-            href="#about"
-            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
-            >About</a
-          >
-          <a
-            href="#skills"
-            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
-            >Skills</a
-          >
-          <a
-            href="#contact"
-            class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
-            >Contact</a
-          >
+      <div id="mobile-menu" class="hidden lg:hidden glass-panel border-t border-gray-800">
+        <div class="px-4 pt-2 pb-4 space-y-1">
+          <a href="#home" class="mobile-link block px-3 py-2 rounded-md text-white hover:bg-white/10">Home</a>
+          <a href="#about" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">About</a>
+          <a href="#research" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">Research</a>
+          <a href="#experience" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">Experience</a>
+          <a href="#projects" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">Projects</a>
+          <a href="#skills" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">Skills</a>
+          <a href="#activities" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">Leadership</a>
+          <a href="#contact" class="mobile-link block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">Contact</a>
         </div>
       </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="pt-0">
-      <!-- Hero Section -->
-      <section
-        id="home"
-        class="min-h-screen flex items-center justify-center relative px-4 sm:px-6 lg:px-8 overflow-hidden"
-      >
-        <!-- Text Content -->
-        <div
-          class="z-10 text-center space-y-6 max-w-4xl hero-text-glow p-8 rounded-3xl"
-        >
-          <div
-            class="inline-block px-4 py-1 rounded-full border border-galaxy-gold/50 bg-galaxy-gold/10 backdrop-blur-sm"
-          >
-            <span class="text-galaxy-gold font-mono text-sm tracking-widest"
-              >EVENT HORIZON REACHED</span
-            >
+    <main>
+      <!-- ================= HERO ================= -->
+      <section id="home" class="min-h-screen flex items-center justify-center relative px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div class="z-10 text-center space-y-6 max-w-5xl hero-text-glow p-6 sm:p-8 rounded-3xl">
+          <div class="rv in inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-galaxy-gold/50 bg-galaxy-gold/10 backdrop-blur-sm">
+            <span class="w-2 h-2 rounded-full bg-galaxy-gold animate-pulse"></span>
+            <span class="text-galaxy-gold font-mono text-xs tracking-widest">EVENT HORIZON REACHED</span>
           </div>
-          <h1
-            class="font-display text-5xl sm:text-7xl lg:text-8xl font-bold leading-tight"
-          >
+          <p class="gsap-hero font-mono text-xs sm:text-sm tracking-[.3em] text-gray-400">NIKHIL KAUSHIK · M.Sc. PHYSICS · IIT ROORKEE</p>
+          <h1 class="gsap-hero font-display text-5xl sm:text-7xl lg:text-8xl font-bold leading-tight">
             <span class="block text-white mb-2">Physics.</span>
             <span class="block text-white mb-2">Programming.</span>
-            <span
-              class="text-transparent bg-clip-text bg-gradient-to-r from-galaxy-gold via-red-500 to-galaxy-gold animate-gradient"
-              >Singularity.</span
-            >
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-galaxy-gold via-red-500 to-galaxy-gold animate-gradient">Singularity.</span>
           </h1>
-          <p
-            class="text-gray-300 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed"
-          >
-            Bridging the gap between theoretical physics and computational
-            reality.
+          <p class="gsap-hero text-gray-300 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed font-mono min-h-[3.5rem]">
+            <span id="typed-text"></span><span class="typed-cursor">|</span>
           </p>
-          <div class="flex gap-4 pt-4 justify-center">
-            <button
-              onclick="gsap.to(window, { duration: 1, scrollTo: '#contact' })"
-              class="px-8 py-3 bg-galaxy-gold hover:bg-yellow-600 text-black font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(255,170,0,0.5)] hover:shadow-[0_0_30px_rgba(255,170,0,0.8)]"
-            >
-              Explore Work
-            </button>
-            <button
-              onclick="gsap.to(window, { duration: 1, scrollTo: '#skills' })"
-              class="px-8 py-3 border border-white/30 text-white hover:bg-white hover:text-black font-bold rounded-lg transition-all backdrop-blur-sm bg-black/30"
-            >
-              View Skills
-            </button>
+          <div class="gsap-hero flex flex-wrap gap-2 justify-center">
+            <span class="chip">Computational Astrophysics</span>
+            <span class="chip">Gaia DR3</span>
+            <span class="chip">Python Pipelines</span>
+            <span class="chip">AI / ML</span>
+          </div>
+          <div class="gsap-hero flex flex-wrap gap-4 pt-2 justify-center">
+            <a href="#research" class="btn-glow px-8 py-3.5 bg-galaxy-gold hover:bg-yellow-500 text-black font-bold rounded-xl shadow-[0_0_20px_rgba(255,170,0,.5)] hover:shadow-[0_0_40px_rgba(255,170,0,.8)] text-sm tracking-wide"><i class="fas fa-rocket mr-2"></i>Explore Research</a>
+            <a href="#contact" class="btn-glow px-8 py-3.5 border border-white/30 text-white hover:bg-white hover:text-black font-bold rounded-xl backdrop-blur-sm bg-black/30 text-sm tracking-wide"><i class="fas fa-satellite-dish mr-2"></i>Contact Me</a>
+          </div>
+          <div class="gsap-hero flex flex-wrap gap-6 justify-center pt-6 text-sm text-gray-400">
+            <span class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-neon-pink"></i>Roorkee, Uttarakhand</span>
+            <span class="flex items-center gap-2"><i class="fas fa-graduation-cap text-galaxy-gold"></i>IIT Roorkee</span>
+            <span class="flex items-center gap-2"><i class="fas fa-circle text-green-400 animate-pulse" style="font-size:8px"></i>Open to research collaborations</span>
           </div>
         </div>
 
-        <!-- Floating Icons -->
-        <div
-          class="absolute top-1/4 left-10 lg:left-1/4 text-4xl text-galaxy-gold float-icon float-delay-1 z-0 opacity-60"
-        >
-          <i class="fas fa-atom"></i>
-        </div>
-        <div
-          class="absolute bottom-1/4 right-10 lg:right-1/4 text-4xl text-neon-purple float-icon float-delay-2 z-0 opacity-60"
-        >
-          <i class="fas fa-code"></i>
-        </div>
-        <div
-          class="absolute top-1/3 right-10 lg:right-20 text-3xl text-red-500 float-icon float-delay-3 z-0 opacity-60"
-        >
-          <i class="fas fa-star"></i>
-        </div>
+        <div class="absolute top-1/4 left-6 lg:left-1/4 text-4xl text-galaxy-gold float-icon z-0 opacity-60"><i class="fas fa-atom"></i></div>
+        <div class="absolute bottom-1/4 right-6 lg:right-1/4 text-4xl text-neon-purple float-icon z-0 opacity-60" style="animation-delay:2s"><i class="fas fa-code"></i></div>
+        <div class="absolute top-1/3 right-6 lg:right-20 text-3xl text-red-500 float-icon z-0 opacity-60" style="animation-delay:4s"><i class="fas fa-star"></i></div>
+        <div class="absolute bottom-1/3 left-6 text-3xl text-cyan-bright float-icon z-0 opacity-40" style="animation-delay:1s"><i class="fas fa-infinity"></i></div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600 animate-bounce"><span class="text-xs font-mono tracking-widest">SCROLL</span><i class="fas fa-chevron-down text-xs"></i></div>
       </section>
 
-      <!-- Core Capabilities -->
-      <section class="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="divider"></div>
+
+      <!-- ================= 01 ABOUT ================= -->
+      <section id="about" class="py-24 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
         <div class="max-w-7xl mx-auto">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Card 1 -->
-            <div
-              class="gsap-fade-up tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect"
-            >
-              <div class="tilt-card-content flex flex-col items-start h-full">
-                <i
-                  class="fas fa-microchip text-4xl text-cyan-bright mb-6 tilt-icon drop-shadow-[0_0_10px_rgba(5,217,232,0.5)]"
-                ></i>
-                <h3 class="font-display text-xl font-bold mb-3 text-white">
-                  Computational Physics
-                </h3>
-                <p class="text-gray-400 text-sm">
-                  Simulating complex systems using numerical methods. From
-                  orbital mechanics to quantum states.
-                </p>
-              </div>
-            </div>
-            <!-- Card 2 -->
-            <div
-              class="gsap-fade-up tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect"
-            >
-              <div class="tilt-card-content flex flex-col items-start h-full">
-                <i
-                  class="fas fa-brain text-4xl text-neon-purple mb-6 tilt-icon drop-shadow-[0_0_10px_rgba(211,0,197,0.5)]"
-                ></i>
-                <h3 class="font-display text-xl font-bold mb-3 text-white">
-                  Data Intelligence
-                </h3>
-                <p class="text-gray-400 text-sm">
-                  Extracting meaningful patterns from chaos. Machine learning
-                  models applied to raw experimental data.
-                </p>
-              </div>
-            </div>
-            <!-- Card 3 -->
-            <div
-              class="gsap-fade-up tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect"
-            >
-              <div class="tilt-card-content flex flex-col items-start h-full">
-                <i
-                  class="fas fa-vr-cardboard text-4xl text-neon-pink mb-6 tilt-icon drop-shadow-[0_0_10px_rgba(255,42,109,0.5)]"
-                ></i>
-                <h3 class="font-display text-xl font-bold mb-3 text-white">
-                  Creative Engineering
-                </h3>
-                <p class="text-gray-400 text-sm">
-                  Building interactive web interfaces that visualize scientific
-                  concepts with beauty and precision.
-                </p>
-              </div>
-            </div>
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-neon-pink/70 mb-2">01 / about me</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-neon-pink">01.</span> About Me</h2>
           </div>
-        </div>
-      </section>
 
-      <!-- About Section (Modified Layout) -->
-      <section
-        id="about"
-        class="py-20 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden"
-      >
-        <div class="max-w-7xl mx-auto">
-          <h2 class="font-display text-4xl font-bold mb-16 text-center">
-            <span class="text-neon-pink">01.</span> About Me
-          </h2>
-
-          <!-- Split Row: Image Left / Text Right -->
-          <div class="flex flex-col lg:flex-row gap-12 items-center mb-16">
-            <!-- Left: Profile Image Circle with Transient Effect (Slides Left->Right) -->
-            <div class="w-full lg:w-1/3 flex justify-center about-img-anim">
+          <div class="flex flex-col lg:flex-row gap-14 items-center mb-14">
+            <div class="w-full lg:w-2/5 flex justify-center rv rv-l">
               <div class="relative w-64 h-64 md:w-80 md:h-80 group">
-                <!-- Rotating Neon Ring -->
-                <div
-                  class="absolute inset-0 rounded-full border-2 border-transparent border-t-neon-pink border-r-neon-purple animate-spin-slow opacity-80"
-                ></div>
-                <div
-                  class="absolute inset-2 rounded-full border border-white/10"
-                ></div>
-
-                <!-- Main Image Container -->
-                <div
-                  class="transient-circle transient-glow w-full h-full rounded-full overflow-hidden border-4 border-black relative"
-                >
-                  <img
-                    src="nk_pic.jpg"
-                    alt="NK Profile"
-                    class="w-full h-full object-cover transition-all duration-700"
-                  />
-
-                  <!-- Overlay -->
-                  <div
-                    class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
-                  ></div>
+                <div class="absolute inset-0 rounded-full border-2 border-transparent border-t-neon-pink border-r-neon-purple animate-spin-slow opacity-80"></div>
+                <div class="absolute inset-2 rounded-full border border-white/10"></div>
+                <div class="absolute -inset-4 rounded-full border border-galaxy-gold/10 animate-spin" style="animation-duration:20s;animation-direction:reverse"></div>
+                <div class="orbit-dot bg-cyan-bright shadow-[0_0_8px_rgba(5,217,232,.8)]"></div>
+                <div class="orbit-dot-2 bg-galaxy-gold shadow-[0_0_6px_rgba(255,170,0,.8)]"></div>
+                <div class="transient-circle transient-glow w-full h-full rounded-full overflow-hidden border-4 border-black relative bg-black flex items-center justify-center">
+                  <span class="absolute font-display text-6xl font-bold text-galaxy-gold/70">NK</span>
+                  <img src="nk_pic.jpg" alt="Nikhil Kaushik" class="relative w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.style.display='none'" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
                 </div>
-
-                <!-- Decorative Orbiting Elements -->
-                <div
-                  class="absolute top-0 right-0 w-4 h-4 bg-cyan-bright rounded-full blur-[2px] animate-pulse"
-                ></div>
-                <div
-                  class="absolute bottom-4 left-4 w-2 h-2 bg-galaxy-gold rounded-full blur-[1px]"
-                ></div>
+                <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black border border-galaxy-gold/30 px-4 py-1.5 rounded-full whitespace-nowrap z-20"><span class="text-galaxy-gold font-mono text-xs">@NIKHILKAUSHIK9</span></div>
               </div>
             </div>
 
-            <!-- Right: Biography Details (Slides Right->Left) -->
-            <div class="w-full lg:w-2/3 about-text-anim">
-              <div
-                class="glass-card p-8 md:p-10 rounded-2xl border-l-4 border-l-neon-pink h-full relative overflow-hidden"
-              >
-                <!-- Background accent -->
-                <div
-                  class="absolute -right-10 -top-10 w-40 h-40 bg-neon-pink/10 rounded-full blur-3xl"
-                ></div>
-
-                <h3
-                  class="text-3xl font-bold mb-6 text-white flex items-center relative z-10"
-                >
-                  <i class="fas fa-terminal text-neon-pink mr-4 text-xl"></i>
-                  The Physicist Who Codes
-                </h3>
-                <div
-                  class="space-y-4 text-gray-300 leading-relaxed text-lg relative z-10"
-                >
-                  <p>
-                    I am a
-                    <span class="text-white font-medium"
-                      >Physics Honours graduate</span
-                    >
-                    with a burning passion for Computer Science. My journey
-                    began with a telescope in one hand and a keyboard in the
-                    other. I realized early on that the future of scientific
-                    discovery lies in the ability to simulate the universe.
-                  </p>
-                  <p>
-                    Today, I blend rigorous mathematical analysis with modern
-                    full-stack development. Whether it's optimizing an algorithm
-                    or centering a div, I apply the first principles of thinking
-                    to every problem I solve.
-                  </p>
-                  <div class="pt-4 flex flex-wrap gap-3">
-                    <span
-                      class="px-3 py-1 text-xs font-mono border border-neon-pink/30 text-neon-pink rounded bg-neon-pink/5"
-                      >Problem Solver</span
-                    >
-                    <span
-                      class="px-3 py-1 text-xs font-mono border border-cyan-bright/30 text-cyan-bright rounded bg-cyan-bright/5"
-                      >Researcher</span
-                    >
-                    <span
-                      class="px-3 py-1 text-xs font-mono border border-galaxy-gold/30 text-galaxy-gold rounded bg-galaxy-gold/5"
-                      >Innovator</span
-                    >
-                  </div>
+            <div class="w-full lg:w-3/5 rv rv-r" style="--d:.15s">
+              <div class="glass-card p-8 md:p-10 rounded-2xl border-l-4 border-l-neon-pink relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-neon-pink/10 rounded-full blur-3xl"></div>
+                <h3 class="text-2xl font-bold mb-6 text-white flex items-center relative z-10"><i class="fas fa-terminal text-neon-pink mr-4 text-lg"></i>The Physicist Who Codes</h3>
+                <div class="space-y-4 text-gray-300 leading-relaxed relative z-10">
+                  <p>I'm a first-year <span class="text-white font-medium">M.Sc. Physics</span> student at the <span class="text-white font-medium">Indian Institute of Technology Roorkee</span>, working at the intersection of <span class="text-galaxy-gold font-medium">computational astrophysics</span> and <span class="text-neon-purple font-medium">AI/ML</span>. I did my undergraduate in Physics (Honours) with a Computer Science minor at ARSD College, University of Delhi.</p>
+                  <p>My research experience is built on Gaia DR3 data: kinematic membership filtering, isochrone fitting and parameter estimation for young open star clusters, with the analysis automated in Python, NumPy and Pandas.</p>
+                  <p>I had pursued the B.S. in Data Science and Applications at IIT Madras (Foundation Level), and I design — physics-society magazines and sites like this one.</p>
+                </div>
+                <div class="pt-6 flex flex-wrap gap-2 relative z-10">
+                  <span class="px-3 py-1.5 text-xs font-mono border border-neon-pink/40 text-neon-pink rounded-lg bg-neon-pink/5">Problem Solver</span>
+                  <span class="px-3 py-1.5 text-xs font-mono border border-cyan-bright/40 text-cyan-bright rounded-lg bg-cyan-bright/5">Researcher</span>
+                  <span class="px-3 py-1.5 text-xs font-mono border border-galaxy-gold/40 text-galaxy-gold rounded-lg bg-galaxy-gold/5">Innovator</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Bottom Row: Future Horizon (Fades Up) -->
-          <div class="w-full about-horizon-anim">
-            <div
-              class="glass-card p-8 rounded-2xl border-l-4 border-l-neon-purple flex flex-col md:flex-row items-center justify-between gap-8"
-            >
+          <!-- Info grid -->
+          <div class="glass-card rounded-2xl p-8 mb-8 rv">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div class="info-cell" style="--c:#ff2a6d"><h5>Research Area</h5><p>Computational Astrophysics</p></div>
+              <div class="info-cell" style="--c:#d300c5"><h5>Specialization</h5><p>Open Star Clusters</p></div>
+              <div class="info-cell" style="--c:#05d9e8"><h5>Current Focus</h5><p>M.Sc. Physics · IIT Roorkee</p></div>
+              <div class="info-cell" style="--c:#ffaa00"><h5>Programming</h5><p>Python Scientific Computing</p></div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-14">
+            <div class="stat-card glass-card rv" style="--c:#ffaa00"><div class="text-4xl font-display font-bold text-galaxy-gold mb-1"><span class="counter" data-target="6">0</span></div><div class="text-xs text-gray-400 font-mono">Star Clusters Analysed</div></div>
+            <div class="stat-card glass-card rv" style="--c:#05d9e8;--d:.08s"><div class="text-4xl font-display font-bold text-cyan-bright mb-1"><span class="counter" data-target="1">0</span></div><div class="text-xs text-gray-400 font-mono">Research Internship</div></div>
+            <div class="stat-card glass-card rv" style="--c:#d300c5;--d:.16s"><div class="text-4xl font-display font-bold text-neon-purple mb-1"><span class="counter" data-target="2">0</span></div><div class="text-xs text-gray-400 font-mono">Physics Magazines Designed</div></div>
+            <div class="stat-card glass-card rv" style="--c:#ff2a6d;--d:.24s"><div class="text-4xl font-display font-bold text-neon-pink mb-1"><span class="counter" data-target="7.67" data-dec="2">0</span></div><div class="text-xs text-gray-400 font-mono">IIT Madras Foundation CGPA</div></div>
+          </div>
+
+          <!-- Education -->
+          <div class="mb-14">
+            <h3 class="text-center text-gray-400 font-mono text-sm mb-8 tracking-widest rv">EDUCATION</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="glass-card rounded-2xl p-6 rv border-t-2 border-t-galaxy-gold">
+                <div class="flex items-center justify-between mb-3"><i class="fas fa-user-graduate text-2xl text-galaxy-gold"></i><span class="date-chip" style="--c:#ffaa00">2025 – Present</span></div>
+                <h4 class="font-display font-bold text-white text-lg">M.Sc. Physics</h4>
+                <p class="text-galaxy-gold text-sm mb-2">Indian Institute of Technology Roorkee</p>
+                <p class="text-gray-400 text-sm">Post-graduate, Year I. Interests: Computational Astrophysics, AI/ML.</p>
+              </div>
+              <div class="glass-card rounded-2xl p-6 rv border-t-2 border-t-neon-pink" style="--d:.08s">
+                <div class="flex items-center justify-between mb-3"><i class="fas fa-atom text-2xl text-neon-pink"></i><span class="date-chip" style="--c:#ff2a6d">2025</span></div>
+                <h4 class="font-display font-bold text-white text-lg">B.Sc. Physics (Honours)</h4>
+                <p class="text-neon-pink text-sm mb-2">ARSD College, University of Delhi</p>
+                <p class="text-gray-400 text-sm">Computer Science minor. CGPA 6.606. Completed "Foundations of Physical Sciences: From Academia to Research".</p>
+              </div>
+              <div class="glass-card rounded-2xl p-6 rv border-t-2 border-t-neon-purple" style="--d:.16s">
+                <div class="flex items-center justify-between mb-3"><i class="fas fa-circle-nodes text-2xl text-neon-purple"></i><span class="date-chip" style="--c:#d300c5">Foundation Level</span></div>
+                <h4 class="font-display font-bold text-white text-lg">B.S. Data Science &amp; Application</h4>
+                <p class="text-neon-purple text-sm mb-2">Indian Institute of Technology Madras</p>
+                <p class="text-gray-400 text-sm">Foundation Level, CGPA 7.67.</p>
+              </div>
+              <div class="glass-card rounded-2xl p-6 rv border-t-2 border-t-cyan-bright" style="--d:.08s">
+                <div class="flex items-center justify-between mb-3"><i class="fas fa-school text-2xl text-cyan-bright"></i><span class="date-chip" style="--c:#05d9e8">2022</span></div>
+                <h4 class="font-display font-bold text-white text-lg">Intermediate (Class XII)</h4>
+                <p class="text-cyan-bright text-sm mb-2">Kendriya Vidyalaya</p>
+                <p class="text-gray-400 text-sm">86.40%</p>
+              </div>
+              <div class="glass-card rounded-2xl p-6 rv border-t-2 border-t-white/30" style="--d:.16s">
+                <div class="flex items-center justify-between mb-3"><i class="fas fa-book-open text-2xl text-white/70"></i><span class="date-chip" style="--c:#ffffff99">2020</span></div>
+                <h4 class="font-display font-bold text-white text-lg">Matriculate (Class X)</h4>
+                <p class="text-white/70 text-sm mb-2">Kendriya Vidyalaya</p>
+                <p class="text-gray-400 text-sm">85.40%</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Future Horizon -->
+          <div class="rv">
+            <div class="glass-card p-8 rounded-2xl border-l-4 border-l-neon-purple flex flex-col md:flex-row items-center justify-between gap-8">
               <div class="md:w-1/3">
-                <h3
-                  class="text-2xl font-bold mb-2 text-white flex items-center"
-                >
-                  <i class="fas fa-globe-americas text-neon-purple mr-3"></i>
-                  Future Horizon
-                </h3>
-                <p class="text-gray-400 text-sm">Where I'm heading next.</p>
+                <h3 class="text-2xl font-bold mb-2 text-white flex items-center"><i class="fas fa-globe-americas text-neon-purple mr-3"></i>Future Horizon</h3>
+                <p class="text-gray-400 text-sm">Trajectories I'm aiming for.</p>
               </div>
-
-              <div class="md:w-2/3 w-full">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div
-                    class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-colors group"
-                  >
-                    <i
-                      class="fas fa-rocket text-neon-purple mb-2 group-hover:scale-110 transition-transform block"
-                    ></i>
-                    <span class="text-sm text-gray-300 font-bold"
-                      >Astrophysics Tools</span
-                    >
-                  </div>
-                  <div
-                    class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-colors group"
-                  >
-                    <i
-                      class="fas fa-project-diagram text-neon-purple mb-2 group-hover:scale-110 transition-transform block"
-                    ></i>
-                    <span class="text-sm text-gray-300 font-bold"
-                      >Quantum Algos</span
-                    >
-                  </div>
-                  <div
-                    class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-colors group"
-                  >
-                    <i
-                      class="fas fa-dna text-neon-purple mb-2 group-hover:scale-110 transition-transform block"
-                    ></i>
-                    <span class="text-sm text-gray-300 font-bold"
-                      >DeSci Platforms</span
-                    >
-                  </div>
-                </div>
+              <div class="md:w-2/3 w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-all group hover:-translate-y-1"><i class="fas fa-rocket text-neon-purple mb-2 block text-xl group-hover:scale-110 transition-transform"></i><span class="text-sm text-gray-300 font-bold block mb-1">Astrophysics Tools</span><span class="text-xs text-gray-500">Open-source simulation &amp; analysis</span></div>
+                <div class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-all group hover:-translate-y-1"><i class="fas fa-project-diagram text-neon-purple mb-2 block text-xl group-hover:scale-110 transition-transform"></i><span class="text-sm text-gray-300 font-bold block mb-1">Quantum Algorithms</span><span class="text-xs text-gray-500">Hybrid classical-quantum computing</span></div>
+                <div class="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-neon-purple/50 transition-all group hover:-translate-y-1"><i class="fas fa-dna text-neon-purple mb-2 block text-xl group-hover:scale-110 transition-transform"></i><span class="text-sm text-gray-300 font-bold block mb-1">DeSci Platforms</span><span class="text-xs text-gray-500">Decentralized scientific research</span></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Skills Section -->
-      <section
-        id="skills"
-        class="py-20 px-4 sm:px-6 lg:px-8 bg-black/40 z-10 relative"
-      >
+      <div class="divider"></div>
+
+      <!-- ================= 02 RESEARCH FOCUS ================= -->
+      <section id="research" class="py-24 px-4 sm:px-6 lg:px-8 bg-black/40 relative z-10">
         <div class="max-w-7xl mx-auto">
-          <h2 class="font-display text-4xl font-bold mb-12 text-center">
-            <span class="text-cyan-bright">02.</span> Qualifications & Tech
-          </h2>
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-cyan-bright/70 mb-2">02 / research focus</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-cyan-bright">02.</span> Research Focus</h2>
+          </div>
 
-          <!-- EDUCATION CARDS -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24 mt-12">
-            <!-- Card 1: Physics -->
-            <div
-              class="edu-card"
-              style="
-                --hover-color: #ffd700;
-                --hover-glow: rgba(255, 215, 0, 0.2);
-              "
-            >
-              <div class="edu-imgbx">
-                <i
-                  class="fas fa-atom text-6xl text-galaxy-gold animate-pulse"
-                ></i>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+            <div class="rv"><div class="tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect h-full">
+              <div class="tilt-card-content flex flex-col items-start h-full">
+                <div class="w-14 h-14 rounded-xl bg-cyan-bright/10 flex items-center justify-center mb-6"><i class="fas fa-star-half-stroke text-2xl text-cyan-bright tilt-icon drop-shadow-[0_0_10px_rgba(5,217,232,.5)]"></i></div>
+                <h3 class="font-display text-xl font-bold mb-3 text-white">Computational Astrophysics</h3>
+                <p class="text-gray-400 text-sm leading-relaxed flex-1">Photometry and kinematics of young open star clusters from Gaia DR3 — membership, extinction, age and metallicity from isochrone fitting.</p>
+                <div class="mt-4 flex gap-2 flex-wrap"><span class="tag border-cyan-bright/30 text-cyan-bright">Gaia DR3</span><span class="tag border-cyan-bright/30 text-cyan-bright">Isochrones</span></div>
               </div>
-              <div class="edu-content">
-                <h2>B.Sc. Physics (Honours)</h2>
-                <span class="subtitle">University of Delhi (ARSD College)</span>
-                <div
-                  class="inline-block px-3 py-1 bg-galaxy-gold/20 text-galaxy-gold rounded-full text-xs font-mono mb-2"
-                >
-                  2022 - 2025
-                </div>
-                <p>
-                  Specialized in Quantum Mechanics, Statistical Thermodynamics,
-                  and Computational Physics. Graduated with distinction.
-                </p>
+            </div></div>
+            <div class="rv" style="--d:.1s"><div class="tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect h-full">
+              <div class="tilt-card-content flex flex-col items-start h-full">
+                <div class="w-14 h-14 rounded-xl bg-neon-purple/10 flex items-center justify-center mb-6"><i class="fas fa-brain text-2xl text-neon-purple tilt-icon drop-shadow-[0_0_10px_rgba(211,0,197,.5)]"></i></div>
+                <h3 class="font-display text-xl font-bold mb-3 text-white">AI / ML for Astronomy</h3>
+                <p class="text-gray-400 text-sm leading-relaxed flex-1">Applying machine learning and data-science methods to astronomical catalogues — classification, morphology and detection problems.</p>
+                <div class="mt-4 flex gap-2 flex-wrap"><span class="tag border-neon-purple/30 text-neon-purple">Machine Learning</span><span class="tag border-neon-purple/30 text-neon-purple">Data Science</span></div>
               </div>
-            </div>
+            </div></div>
+            <div class="rv" style="--d:.2s"><div class="tilt-card rounded-2xl p-8 cursor-pointer neon-border-effect h-full">
+              <div class="tilt-card-content flex flex-col items-start h-full">
+                <div class="w-14 h-14 rounded-xl bg-neon-pink/10 flex items-center justify-center mb-6"><i class="fas fa-code-branch text-2xl text-neon-pink tilt-icon drop-shadow-[0_0_10px_rgba(255,42,109,.5)]"></i></div>
+                <h3 class="font-display text-xl font-bold mb-3 text-white">Scientific Pipelines</h3>
+                <p class="text-gray-400 text-sm leading-relaxed flex-1">Automating stellar-parameter calculations and batch cluster analysis in Python, NumPy and Pandas, with Matplotlib for diagnostics.</p>
+                <div class="mt-4 flex gap-2 flex-wrap"><span class="tag border-neon-pink/30 text-neon-pink">Python</span><span class="tag border-neon-pink/30 text-neon-pink">Automation</span></div>
+              </div>
+            </div></div>
+          </div>
 
-            <!-- Card 2: Data Science -->
-            <div
-              class="edu-card"
-              style="
-                --hover-color: #d300c5;
-                --hover-glow: rgba(211, 0, 197, 0.2);
-              "
-            >
-              <div class="edu-imgbx">
-                <i
-                  class="fas fa-circle-nodes text-6xl text-neon-purple animate-pulse"
-                ></i>
-              </div>
-              <div class="edu-content">
-                <h2>Data Science and Application</h2>
-                <span class="subtitle"
-                  >Indian Institute of Technology Madras</span
-                >
-                <div
-                  class="inline-block px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-xs font-mono mb-2"
-                >
-                  2024
-                </div>
-                <p>
-                  Comprehensive training in Python, SQL, Machine Learning
-                  pipelines, and advanced Data Visualization techniques.
-                </p>
-              </div>
+          <div class="rv text-center mb-14">
+            <h3 class="text-gray-400 font-mono text-sm mb-6 tracking-widest">RESEARCH INTERESTS</h3>
+            <div class="flex flex-wrap gap-3 justify-center">
+              <span class="chip"><i class="fas fa-star text-galaxy-gold mr-1"></i> Open Star Cluster Analysis</span>
+              <span class="chip"><i class="fas fa-meteor text-neon-pink mr-1"></i> Stellar Classification</span>
+              <span class="chip"><i class="fas fa-hurricane text-neon-purple mr-1"></i> Galaxy Morphology</span>
+              <span class="chip"><i class="fas fa-globe text-cyan-bright mr-1"></i> Exoplanet Detection</span>
             </div>
           </div>
 
-          <!-- Tech Stack Grid -->
-          <h3
-            class="text-center text-gray-400 font-mono text-sm mb-8 tracking-widest"
-          >
-            COMMAND LINE ARSENAL
-          </h3>
-          <div
-            class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6 text-center"
-          >
-            <!-- Tech Items -->
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-python-plain text-4xl mb-2 text-gray-500 group-hover:text-yellow-400 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">Python</p>
+          <!-- Pipeline archive -->
+          <div class="glass-card rounded-2xl p-8 rv">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+              <h3 class="font-display text-xl font-bold text-white"><i class="fas fa-database text-cyan-bright mr-3"></i>Observation Archive · Open-Cluster Workflow</h3>
+              <span class="font-mono text-xs text-gray-500">TARGETS : Alessi 3 · Melotte 111</span>
             </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-cplusplus-plain text-4xl mb-2 text-gray-500 group-hover:text-blue-500 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">C++</p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-javascript-plain text-4xl mb-2 text-gray-500 group-hover:text-yellow-300 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">
-                JavaScript
-              </p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-react-original text-4xl mb-2 text-gray-500 group-hover:text-cyan-400 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">React</p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-tailwindcss-plain text-4xl mb-2 text-gray-500 group-hover:text-cyan-bright transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">
-                Tailwind
-              </p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-latex-original text-4xl mb-2 text-gray-500 group-hover:text-white transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">LaTeX</p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-mysql-plain text-4xl mb-2 text-gray-500 group-hover:text-blue-400 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">MySQL</p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="fas fa-chart-pie text-4xl mb-2 text-gray-500 group-hover:text-yellow-500 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">
-                PowerBI
-              </p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-git-plain text-4xl mb-2 text-gray-500 group-hover:text-red-500 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">Git</p>
-            </div>
-            <div class="tech-item gsap-stagger group cursor-default">
-              <i
-                class="devicon-matlab-plain text-4xl mb-2 text-gray-500 group-hover:text-orange-500 transition-colors"
-              ></i>
-              <p class="text-xs text-gray-500 group-hover:text-white">MATLAB</p>
+            <div class="flow">
+              <div class="flow-step"><b>01 · INGEST</b><span>Gaia DR3 astrometric + photometric datasets</span></div>
+              <div class="flow-step"><b>02 · FILTER</b><span>Kinematic selection with proper motions &amp; parallaxes</span></div>
+              <div class="flow-step"><b>03 · FIT</b><span>Isochrone fitting → extinction, log age, metallicity</span></div>
+              <div class="flow-step"><b>04 · VISUALISE</b><span>Vector point diagrams &amp; spatial distribution models</span></div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Contact Section -->
-      <section
-        id="contact"
-        class="py-24 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col justify-center relative z-10"
-      >
-        <div class="max-w-7xl mx-auto w-full">
-          <h2 class="font-display text-4xl font-bold mb-4 text-center">
-            <span class="text-galaxy-gold">03.</span> Social Connect
-          </h2>
-          <p class="text-center text-gray-400 mb-16">
-            Connect on frequencies across the web.
-          </p>
+      <div class="divider"></div>
 
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <!-- Contact Tiles -->
-            <a
-              href="https://github.com/NIKHILKAUSHIK9"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fab fa-github text-5xl text-white mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >GITHUB</span
-                >
+      <!-- ================= 03 EXPERIENCE ================= -->
+      <section id="experience" class="py-24 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-4xl mx-auto">
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-neon-pink/70 mb-2">03 / research experience</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-neon-pink">03.</span> Research Experience</h2>
+          </div>
+
+          <div class="tl space-y-8">
+            <div class="tl-item rv" style="--c:#ffaa00">
+              <span class="tl-dot"></span>
+              <div class="glass-card rounded-2xl p-6 md:p-8">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <span class="date-chip">June 2024 – July 2024</span>
+                  <span class="font-mono text-xs text-gray-500">Research Intern</span>
+                </div>
+                <h3 class="font-display text-xl font-bold text-white">Miranda House, University of Delhi</h3>
+                <h4 class="text-galaxy-gold text-sm mb-4">Photometry &amp; Kinematics of Young Star Clusters — Computational Astrophysics</h4>
+                <ul class="space-y-2 text-gray-300 text-sm leading-relaxed">
+                  <li class="flex gap-3"><i class="fas fa-chevron-right text-galaxy-gold text-xs mt-1.5"></i>Processed Gaia DR3 astrometric and photometric datasets.</li>
+                  <li class="flex gap-3"><i class="fas fa-chevron-right text-galaxy-gold text-xs mt-1.5"></i>Evaluated kinematics and fundamental parameters of the <span class="text-white">Alessi 3</span> and <span class="text-white">Melotte 111</span> star clusters.</li>
+                  <li class="flex gap-3"><i class="fas fa-chevron-right text-galaxy-gold text-xs mt-1.5"></i>Performed kinematic filtering using proper motions and parallaxes.</li>
+                  <li class="flex gap-3"><i class="fas fa-chevron-right text-galaxy-gold text-xs mt-1.5"></i>Derived extinction coefficients, log age and metallicity through isochrone fitting.</li>
+                  <li class="flex gap-3"><i class="fas fa-chevron-right text-galaxy-gold text-xs mt-1.5"></i>Automated stellar parameter calculations using Python, NumPy and Pandas.</li>
+                  <li class="flex gap-3"><i class="fas fa-chevron-right text-galaxy-gold text-xs mt-1.5"></i>Generated vector point diagrams and spatial distribution models using Matplotlib.</li>
+                </ul>
+                <div class="mt-5 flex flex-wrap gap-2">
+                  <span class="tag border-galaxy-gold/30 text-galaxy-gold/80">Python</span><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">NumPy</span><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">Pandas</span><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">Matplotlib</span><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">TOPCAT</span>
+                </div>
               </div>
-            </a>
-            <a
-              href="https://www.linkedin.com/in/nikhilkaushik9"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fab fa-linkedin text-5xl text-blue-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >LINKEDIN</span
-                >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- ================= 04 PROJECTS ================= -->
+      <section id="projects" class="py-24 px-4 sm:px-6 lg:px-8 bg-black/40 relative z-10">
+        <div class="max-w-7xl mx-auto">
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-galaxy-gold/70 mb-2">04 / scientific projects</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-galaxy-gold">04.</span> Scientific Projects</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div class="project-card glass-card p-6 flex flex-col rv">
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-lg bg-galaxy-gold/10 flex items-center justify-center"><i class="fas fa-weight-scale text-2xl text-galaxy-gold"></i></div>
               </div>
-            </a>
-            <a
-              href="mailto:nkaushik3535@gmail.com"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fas fa-envelope text-5xl text-red-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(248,113,113,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >EMAIL</span
-                >
+              <h3 class="font-display font-bold text-white text-lg mb-2">Open Cluster Mass Pipeline</h3>
+              <p class="text-gray-400 text-sm leading-relaxed flex-1 mb-4">Python pipeline replicating the Almeida et al. (2023) methodology for batch photometry and kinematic analysis of young clusters. Computes the present-day mass function slope Γ with Poisson errors, using PARSEC isochrones, a Chabrier IMF, Monte Carlo nearest-neighbour matching in Gaia eDR3 magnitude space, binary fraction, white-dwarf contribution via the Cummings et al. (2018) IFMR, and Cardelli-law extinction.</p>
+              <div class="flex flex-wrap gap-2"><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">Python</span><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">Gaia eDR3</span><span class="tag border-galaxy-gold/30 text-galaxy-gold/80">Streamlit</span></div>
+            </div>
+
+            <div class="project-card glass-card p-6 flex flex-col rv" style="--d:.1s">
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-lg bg-cyan-bright/10 flex items-center justify-center"><i class="fas fa-bullseye text-2xl text-cyan-bright"></i></div>
+                <a href="https://github.com/NIKHILKAUSHIK9" target="_blank" rel="noopener" aria-label="GitHub" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-github"></i></a>
               </div>
-            </a>
-            <a
-              href="https://discord.com/users/nikhilkaushik9/"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fab fa-discord text-5xl text-indigo-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(129,140,248,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >DISCORD</span
-                >
+              <h3 class="font-display font-bold text-white text-lg mb-2">Gaia DR3 Cluster Kinematics</h3>
+              <p class="text-gray-400 text-sm leading-relaxed flex-1 mb-4">Kinematic filtering, isochrone fitting and parameter derivation for the Alessi 3 and Melotte 111 clusters, with automated stellar-parameter calculation and vector-point-diagram generation.</p>
+              <div class="flex flex-wrap gap-2"><span class="tag border-cyan-bright/30 text-cyan-bright/80">Gaia DR3</span><span class="tag border-cyan-bright/30 text-cyan-bright/80">Pandas</span><span class="tag border-cyan-bright/30 text-cyan-bright/80">Matplotlib</span></div>
+            </div>
+          </div>
+
+          <div class="text-center mt-12 rv">
+            <a href="https://github.com/NIKHILKAUSHIK9" target="_blank" rel="noopener" class="btn-glow inline-flex items-center gap-3 px-8 py-3.5 border border-white/20 text-white hover:border-galaxy-gold/50 hover:text-galaxy-gold rounded-xl transition-all text-sm font-medium"><i class="fab fa-github text-lg"></i>View All on GitHub<i class="fas fa-arrow-right text-xs"></i></a>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- ================= 05 SKILLS ================= -->
+      <section id="skills" class="py-24 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-6xl mx-auto">
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-neon-purple/70 mb-2">05 / technical skills</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-neon-purple">05.</span> Technical Skills</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card rounded-2xl p-6 rv">
+              <h3 class="font-mono text-xs tracking-widest text-galaxy-gold mb-5">SCIENTIFIC PROGRAMMING</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="skill-item"><i class="devicon-python-plain"></i><p>Python</p></div>
+                <div class="skill-item"><i class="devicon-latex-original"></i><p>LaTeX</p></div>
+                <div class="skill-item"><i class="devicon-html5-plain"></i><p>HTML5</p></div>
+                <div class="skill-item"><i class="devicon-css3-plain"></i><p>CSS</p></div>
               </div>
-            </a>
-            <a
-              href="https://www.instagram.com/nikhil_kaushik9/"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fab fa-instagram text-5xl text-pink-500 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(236,72,153,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >INSTAGRAM</span
-                >
+            </div>
+            <div class="glass-card rounded-2xl p-6 rv" style="--d:.1s">
+              <h3 class="font-mono text-xs tracking-widest text-cyan-bright mb-5">SOFTWARE &amp; LIBRARIES</h3>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="skill-item"><i class="devicon-numpy-original"></i><p>NumPy</p></div>
+                <div class="skill-item"><i class="devicon-pandas-original"></i><p>Pandas</p></div>
+                <div class="skill-item"><i class="fas fa-table"></i><p>TOPCAT</p></div>
+                <div class="skill-item"><i class="devicon-git-plain"></i><p>Git</p></div>
+                <div class="skill-item"><i class="devicon-mysql-plain"></i><p>MySQL</p></div>
+                <div class="skill-item"><i class="fas fa-chart-line"></i><p>Matplotlib</p></div>
               </div>
-            </a>
-            <a
-              href="https://www.youtube.com/@nikhilkaushik9"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fab fa-youtube text-5xl text-red-600 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(220,38,38,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >YOUTUBE</span
-                >
+            </div>
+          </div>
+
+          <div class="mt-6 glass-card rounded-2xl p-6 rv">
+            <h3 class="font-mono text-xs tracking-widest text-gray-400 mb-4">COURSES &amp; STREAMS</h3>
+            <div class="flex flex-wrap gap-2">
+              <span class="chip">Physics Honours</span>
+              <span class="chip">Computer Science Minor</span>
+              <span class="chip">B.S. Data Science &amp; Application (IIT Madras) · Foundation</span>
+              <span class="chip">Foundations of Physical Sciences: From Academia to Research (ARSD)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- ================= 06 LEADERSHIP ================= -->
+      <section id="activities" class="py-24 px-4 sm:px-6 lg:px-8 bg-black/40 relative z-10">
+        <div class="max-w-4xl mx-auto">
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-cyan-bright/70 mb-2">06 / positions of responsibility</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-cyan-bright">06.</span> Leadership &amp; Activities</h2>
+          </div>
+
+          <div class="tl space-y-8">
+            <div class="tl-item rv" style="--c:#05d9e8">
+              <span class="tl-dot"></span>
+              <div class="glass-card rounded-2xl p-6">
+                <span class="date-chip">May 2025</span>
+                <h3 class="font-display text-lg font-bold text-white mt-3">Volunteer</h3>
+                <h4 class="text-cyan-bright text-sm mb-2">ARSD College, University of Delhi</h4>
+                <p class="text-gray-400 text-sm">Management-team volunteer for the 3rd International Conference on Advanced Functional Materials &amp; Devices for Sustainable Development (AFMD-2025).</p>
               </div>
-            </a>
-            <a
-              href="https://www.canva.com/settings/your-account"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fas fa-palette text-5xl text-cyan-400 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >CANVA</span
-                >
+            </div>
+            <div class="tl-item rv" style="--c:#ff2a6d">
+              <span class="tl-dot"></span>
+              <div class="glass-card rounded-2xl p-6">
+                <span class="date-chip">Aug 2024 – Jul 2025</span>
+                <h3 class="font-display text-lg font-bold text-white mt-3">Chief Designing Head</h3>
+                <h4 class="text-neon-pink text-sm mb-2">Illuminati (The Physics Society), ARSD College</h4>
+                <p class="text-gray-400 text-sm">Designed the annual Physics Department magazine <span class="text-white font-medium">DRAVYAM</span>.</p>
+                <a href="https://canva.link/s3zc2vjybacmr5f" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full border border-neon-pink/40 text-neon-pink text-xs font-mono hover:bg-neon-pink hover:text-black transition-all"><i class="fas fa-eye"></i>Preview DRAVYAM<i class="fas fa-arrow-up-right-from-square text-[10px]"></i></a>
               </div>
-            </a>
-            <a
-              href="https://m.facebook.com/profile.php?id=100069334432220&name=xhp_nt__fb__action__open_user"
-              class="tilt-card neon-border-effect relative h-48 rounded-2xl cursor-pointer perspective-container"
-            >
-              <div
-                class="tilt-card-content h-full flex flex-col items-center justify-center"
-              >
-                <i
-                  class="fab fa-facebook text-5xl text-blue-600 mb-4 tilt-icon drop-shadow-[0_0_10px_rgba(37,99,235,0.5)]"
-                ></i>
-                <span
-                  class="text-sm font-bold tracking-wider group-hover:text-neon-pink transition-colors"
-                  >FACEBOOK</span
-                >
+            </div>
+            <div class="tl-item rv" style="--c:#d300c5">
+              <span class="tl-dot"></span>
+              <div class="glass-card rounded-2xl p-6">
+                <span class="date-chip">Aug 2023 – Jul 2024</span>
+                <h3 class="font-display text-lg font-bold text-white mt-3">Designer</h3>
+                <h4 class="text-neon-purple text-sm mb-2">Illuminati (The Physics Society), ARSD College</h4>
+                <p class="text-gray-400 text-sm">Designed the annual Physics Department magazine <span class="text-white font-medium">TESSERACT</span>.</p>
+                <a href="https://canva.link/q69pwpk170uzz04" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full border border-neon-purple/40 text-neon-purple text-xs font-mono hover:bg-neon-purple hover:text-black transition-all"><i class="fas fa-eye"></i>Preview TESSERACT<i class="fas fa-arrow-up-right-from-square text-[10px]"></i></a>
               </div>
-            </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- ================= 07 CONTACT / MISSION CONTROL ================= -->
+      <section id="contact" class="py-24 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="mb-16 text-center rv">
+            <p class="section-number text-galaxy-gold/70 mb-2">07 / mission control</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-galaxy-gold">07.</span> Mission Control</h2>
+            <p class="text-gray-400 mt-4 max-w-lg mx-auto">Connect on frequencies across the web. Transmissions welcome.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-14">
+            <div class="terminal rv rv-l">
+              <div class="terminal-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span class="ml-3">mission-terminal</span></div>
+              <div class="terminal-body p-6">
+                <p>&gt; Initializing communication...</p>
+                <p>&gt; Observatory Status : <span class="text-green-400">ONLINE</span></p>
+                <p>&gt; <span class="k">Target</span> : <span class="v">Nikhil Kaushik</span></p>
+                <p>&gt; <span class="k">Research Field</span> : <span class="v">Computational Astrophysics · AI/ML</span></p>
+                <p>&gt; <span class="k">Base</span> : <span class="v">IIT Roorkee, Uttarakhand</span></p>
+                <p>&gt; <span class="k">Email</span> : <a class="v hover:text-galaxy-gold" href="mailto:nikhil_k@ph.iitr.ac.in">nikhil_k@ph.iitr.ac.in</a></p>
+                <p>&gt; <span class="k">Availability</span> : <span class="v">Open to research collaborations &amp; internships</span></p>
+                <p>&gt; Transmission Ready<span class="typed-cursor">_</span></p>
+              </div>
+            </div>
+
+            <form id="contact-form" class="glass-card rounded-2xl p-6 md:p-8 space-y-4 rv rv-r" style="--d:.1s">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input class="field" type="text" id="f-name" placeholder="Name" required />
+                <input class="field" type="email" id="f-email" placeholder="Email" required />
+              </div>
+              <input class="field" type="text" id="f-subject" placeholder="Subject" required />
+              <textarea class="field" id="f-msg" rows="5" placeholder="Message" required></textarea>
+              <button type="submit" class="btn-glow w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-galaxy-gold text-black font-bold rounded-xl hover:bg-yellow-500 shadow-[0_0_20px_rgba(255,170,0,.4)] hover:shadow-[0_0_40px_rgba(255,170,0,.7)] text-sm"><i class="fas fa-paper-plane"></i>Transmit Message</button>
+              <p class="text-xs text-gray-600 font-mono">Opens your email client with the message pre-filled.</p>
+            </form>
+          </div>
+
+          <div class="social-container rv">
+            <a href="https://github.com/NIKHILKAUSHIK9" target="_blank" rel="noopener"><i class="fab fa-github"></i><span>GitHub</span></a>
+            <a href="https://www.linkedin.com/in/nikhilkaushik9" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i><span>LinkedIn</span></a>
+            <a href="mailto:nikhil_k@ph.iitr.ac.in"><i class="fas fa-envelope"></i><span>Email</span></a>
+            <a href="https://discord.com/users/nikhilkaushik9/" target="_blank" rel="noopener"><i class="fab fa-discord"></i><span>Discord</span></a>
+            <a href="https://www.instagram.com/nikhil_kaushik9/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i><span>Instagram</span></a>
+            <a href="https://www.youtube.com/@nikhilkaushik9" target="_blank" rel="noopener"><i class="fab fa-youtube"></i><span>YouTube</span></a>
+            <a href="https://twitter.com/NIKHIL_KAUSHIK9" target="_blank" rel="noopener"><i class="fab fa-x-twitter"></i><span>X / Twitter</span></a>
+            <a href="https://m.facebook.com/profile.php?id=100069334432220" target="_blank" rel="noopener"><i class="fab fa-facebook"></i><span>Facebook</span></a>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Footer -->
-    <footer
-      class="border-t border-t-neon-pink/30 glass-panel bg-black/80 backdrop-blur-md pt-12 pb-8"
-    >
+    <!-- ================= FOOTER ================= -->
+    <footer class="border-t border-t-neon-pink/30 glass-panel bg-black/80 pt-12 pb-8 relative z-10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <!-- Brand -->
-          <div class="col-span-1">
-            <span class="font-display font-bold text-3xl tracking-tighter">
-              <span class="text-white">NK</span
-              ><span class="text-galaxy-gold">.</span>
-            </span>
-            <p class="text-gray-500 text-sm mt-4">
-              Exploring the universe, one line of code at a time.
-            </p>
+          <div>
+            <span class="font-display font-bold text-3xl tracking-tighter"><span class="text-white">NK</span><span class="text-galaxy-gold">.</span></span>
+            <p class="text-white text-sm font-medium mt-3">Nikhil Kaushik</p>
+            <p class="text-gray-500 text-sm mt-1 leading-relaxed">M.Sc. Physics, IIT Roorkee. Exploring the universe, one line of code at a time.</p>
           </div>
-          <!-- Links -->
-          <div class="col-span-1">
-            <h4
-              class="text-white font-bold mb-4 uppercase tracking-wider text-sm"
-            >
-              Navigation
-            </h4>
+          <div>
+            <h4 class="text-white mb-4 uppercase tracking-wider text-xs font-mono">Observatory Navigation</h4>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li>
-                <a href="#home" class="hover:text-cyan-bright transition-colors"
-                  >Home</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#about"
-                  class="hover:text-cyan-bright transition-colors"
-                  >About</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#skills"
-                  class="hover:text-cyan-bright transition-colors"
-                  >Skills</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#contact"
-                  class="hover:text-cyan-bright transition-colors"
-                  >Contact</a
-                >
-              </li>
+              <li><a href="#home" class="hover:text-cyan-bright transition-colors">Home</a></li>
+              <li><a href="#about" class="hover:text-cyan-bright transition-colors">About</a></li>
+              <li><a href="#research" class="hover:text-cyan-bright transition-colors">Research</a></li>
+              <li><a href="#projects" class="hover:text-cyan-bright transition-colors">Projects</a></li>
+              <li><a href="#contact" class="hover:text-cyan-bright transition-colors">Mission Control</a></li>
             </ul>
           </div>
-          <!-- Socials -->
-          <div class="col-span-1">
-            <h4
-              class="text-white font-bold mb-4 uppercase tracking-wider text-sm"
-            >
-              Socials
-            </h4>
+          <div>
+            <h4 class="text-white mb-4 uppercase tracking-wider text-xs font-mono">Current Research</h4>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li>
-                <a
-                  href="https://www.linkedin.com/in/nikhilkaushik9"
-                  class="hover:text-neon-pink transition-colors"
-                  >LinkedIn</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://github.com/NIKHILKAUSHIK9"
-                  class="hover:text-neon-pink transition-colors"
-                  >GitHub</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://twitter.com/NIKHIL_KAUSHIK9"
-                  class="hover:text-neon-pink transition-colors"
-                  >Twitter</a
-                >
-              </li>
+              <li>Open Star Clusters</li><li>Gaia DR3 Kinematics</li><li>Isochrone Fitting</li><li>Mass Functions</li><li>AI/ML for Astronomy</li>
             </ul>
           </div>
-          <!-- Contact -->
-          <div class="col-span-1">
-            <h4
-              class="text-white font-bold mb-4 uppercase tracking-wider text-sm"
-            >
-              Contact Info
-            </h4>
-            <p class="text-gray-400 text-sm">Delhi, India</p>
-            <p class="text-gray-400 text-sm">nkaushik3535@gmail.com</p>
+          <div>
+            <h4 class="text-white mb-4 uppercase tracking-wider text-xs font-mono">Contact</h4>
+            <div class="space-y-2 text-sm text-gray-400">
+              <p class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-neon-pink text-xs"></i>Roorkee, India</p>
+              <p class="flex items-center gap-2"><i class="fas fa-envelope text-galaxy-gold text-xs"></i>nikhil_k@ph.iitr.ac.in</p>
+              <p class="flex items-center gap-2 mt-3"><i class="fas fa-circle text-green-400 animate-pulse" style="font-size:8px"></i><span class="text-green-400 text-xs">Observatory Online</span></p>
+            </div>
           </div>
         </div>
-        <div class="border-t border-gray-800 pt-8 text-center">
-          <p class="text-gray-600 text-xs">
-            &copy; 2026 NK Physics Portfolio. Built with Starlight & Code.
-          </p>
+        <div class="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-gray-600 text-xs font-mono">© 2026 Nikhil Kaushik · All Rights Reserved</p>
+          <p class="text-gray-700 text-xs font-mono">Physics · Programming · Singularity</p>
         </div>
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
-      // --- 1. SUPERMASSIVE BLACK HOLE ANIMATION (INTERSTELLAR STYLE) ---
+      // ---------- Loader (never blocks, even if a CDN fails) ----------
+      (function () {
+        const loader = document.getElementById("loader");
+        const hide = () => loader.classList.add("done");
+        window.addEventListener("load", () => setTimeout(hide, 700));
+        setTimeout(hide, 4500);
+      })();
+
+      const hasGSAP = typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+      const hasTHREE = typeof THREE !== "undefined";
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // ---------- Custom cursor + particle trail (fine pointers only) ----------
+      if (window.matchMedia("(pointer: fine)").matches && !reduceMotion) {
+        document.body.classList.add("has-cursor");
+        const dot = document.getElementById("cursor-dot");
+        const ring = document.getElementById("cursor-ring");
+        let mx = 0, my = 0, rx = 0, ry = 0, lastP = 0;
+        document.addEventListener("mousemove", (e) => {
+          mx = e.clientX; my = e.clientY;
+          dot.style.left = mx + "px"; dot.style.top = my + "px";
+          const now = performance.now();
+          if (now - lastP > 45) {
+            lastP = now;
+            const p = document.createElement("div");
+            const s = Math.random() * 6 + 3;
+            const c = ["#ffaa00", "#ff2a6d", "#d300c5", "#05d9e8"][Math.floor(Math.random() * 4)];
+            p.className = "particle";
+            p.style.cssText = `left:${mx}px;top:${my}px;width:${s}px;height:${s}px;background:${c};box-shadow:0 0 ${s * 2}px ${c}`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+          }
+        });
+        (function follow() {
+          rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+          ring.style.left = rx + "px"; ring.style.top = ry + "px";
+          requestAnimationFrame(follow);
+        })();
+        document.querySelectorAll("a, button").forEach((el) => {
+          el.addEventListener("mouseenter", () => { ring.style.width = ring.style.height = "54px"; ring.style.borderColor = "rgba(255,42,109,.8)"; dot.style.background = "#ff2a6d"; });
+          el.addEventListener("mouseleave", () => { ring.style.width = ring.style.height = "36px"; ring.style.borderColor = "rgba(255,170,0,.6)"; dot.style.background = "#ffaa00"; });
+        });
+      }
+
+      // ---------- Scroll progress ----------
+      window.addEventListener("scroll", () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        document.getElementById("scroll-progress").style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+      }, { passive: true });
+
+      // ---------- BLACK HOLE (unchanged behaviour) ----------
       const initBlackHole = () => {
+        if (!hasTHREE) return;
         const container = document.getElementById("blackhole-container");
         const scene = new THREE.Scene();
-
-        // Camera setup - Updated FOV for scale
-        const camera = new THREE.PerspectiveCamera(
-          75,
-          window.innerWidth / window.innerHeight,
-          0.1,
-          1000,
-        );
-        camera.position.z = 2.5;
-        camera.position.y = 0;
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = window.innerWidth < 768 ? 4.0 : 2.5;
         camera.lookAt(0, 0, 0);
 
-        // Renderer
-        const renderer = new THREE.WebGLRenderer({
-          alpha: true,
-          antialias: true,
-        });
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.domElement.id = "blackhole-canvas";
         container.appendChild(renderer.domElement);
 
-        // WRAPPER GROUP FOR SCROLL ANIMATION
         const scrollGroup = new THREE.Group();
         scene.add(scrollGroup);
-
-        // Group to hold all black hole components
         const blackHoleGroup = new THREE.Group();
         scrollGroup.add(blackHoleGroup);
 
-        // 1. EVENT HORIZON (The Black Sphere)
-        const eventHorizonGeo = new THREE.SphereGeometry(1, 64, 64);
-        const eventHorizonMat = new THREE.MeshBasicMaterial({
-          color: 0x000000,
-        });
-        const eventHorizon = new THREE.Mesh(eventHorizonGeo, eventHorizonMat);
-        blackHoleGroup.add(eventHorizon);
+        // Event horizon
+        blackHoleGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), new THREE.MeshBasicMaterial({ color: 0x000000 })));
 
-        // 2. ACCRETION DISK (The Glowing Ring)
-        const canvas = document.createElement("canvas");
-        canvas.width = 512;
-        canvas.height = 512;
-        const context = canvas.getContext("2d");
-
-        const gradient = context.createRadialGradient(
-          256,
-          256,
-          100,
-          256,
-          256,
-          256,
-        );
-        gradient.addColorStop(0, "rgba(255, 255, 255, 0)");
-        gradient.addColorStop(0.3, "rgba(255, 200, 50, 1)");
-        gradient.addColorStop(0.5, "rgba(255, 100, 0, 0.8)");
-        gradient.addColorStop(0.8, "rgba(100, 0, 0, 0.4)");
-        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, 512, 512);
-
+        // Accretion disk
+        const dc = document.createElement("canvas");
+        dc.width = 512; dc.height = 512;
+        const dctx = dc.getContext("2d");
+        const g = dctx.createRadialGradient(256, 256, 100, 256, 256, 256);
+        g.addColorStop(0, "rgba(255,255,255,0)");
+        g.addColorStop(0.3, "rgba(255,200,50,1)");
+        g.addColorStop(0.5, "rgba(255,100,0,0.8)");
+        g.addColorStop(0.8, "rgba(100,0,0,0.4)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        dctx.fillStyle = g;
+        dctx.fillRect(0, 0, 512, 512);
         for (let i = 0; i < 100; i++) {
-          context.beginPath();
-          context.arc(256, 256, 120 + Math.random() * 120, 0, Math.PI * 2);
-          context.strokeStyle = `rgba(255, ${Math.floor(Math.random() * 150)}, 0, ${Math.random() * 0.3})`;
-          context.lineWidth = Math.random() * 5;
-          context.stroke();
+          dctx.beginPath();
+          dctx.arc(256, 256, 120 + Math.random() * 120, 0, Math.PI * 2);
+          dctx.strokeStyle = `rgba(255,${Math.floor(Math.random() * 150)},0,${Math.random() * 0.3})`;
+          dctx.lineWidth = Math.random() * 5;
+          dctx.stroke();
         }
-
-        const diskTexture = new THREE.CanvasTexture(canvas);
-        const diskGeo = new THREE.RingGeometry(1.2, 4.0, 64, 8);
-        const diskMat = new THREE.MeshBasicMaterial({
-          map: diskTexture,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.9,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-        });
-
-        const accretionDisk = new THREE.Mesh(diskGeo, diskMat);
+        const accretionDisk = new THREE.Mesh(
+          new THREE.RingGeometry(1.2, 4.0, 64, 8),
+          new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(dc), side: THREE.DoubleSide, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false })
+        );
         accretionDisk.rotation.x = Math.PI / 2;
         blackHoleGroup.add(accretionDisk);
 
-        // 3. GRAVITATIONAL LENSING HALO
-        const haloGeo = new THREE.RingGeometry(1.2, 1.45, 64);
-        const haloMat = new THREE.MeshBasicMaterial({
-          color: 0xffaa00,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.4,
-          blending: THREE.AdditiveBlending,
-        });
-        const halo = new THREE.Mesh(haloGeo, haloMat);
-        halo.rotation.y = 0;
+        // Lensing halo
+        const halo = new THREE.Mesh(
+          new THREE.RingGeometry(1.2, 1.45, 64),
+          new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending })
+        );
         halo.lookAt(camera.position);
         blackHoleGroup.add(halo);
 
-        // 4. PARTICLE SYSTEM
-        const particlesGeo = new THREE.BufferGeometry();
-        const particleCount = 3000;
-        const posArray = new Float32Array(particleCount * 3);
-
-        for (let i = 0; i < particleCount * 3; i += 3) {
-          const angle = Math.random() * Math.PI * 2;
-          const radius = 1.5 + Math.random() * 20;
-          const spread = (Math.random() - 0.5) * 1.5;
-
-          posArray[i] = Math.cos(angle) * radius;
-          posArray[i + 1] = spread;
-          posArray[i + 2] = Math.sin(angle) * radius;
+        // Particles
+        const N = 3000, pos = new Float32Array(N * 3);
+        for (let i = 0; i < N * 3; i += 3) {
+          const a = Math.random() * Math.PI * 2, r = 1.5 + Math.random() * 20;
+          pos[i] = Math.cos(a) * r; pos[i + 1] = (Math.random() - 0.5) * 1.5; pos[i + 2] = Math.sin(a) * r;
         }
-
-        particlesGeo.setAttribute(
-          "position",
-          new THREE.BufferAttribute(posArray, 3),
-        );
-
-        const particlesMat = new THREE.PointsMaterial({
-          size: 0.04,
-          color: 0xffaa00,
-          transparent: true,
-          opacity: 0.6,
-          blending: THREE.AdditiveBlending,
-        });
-
-        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+        const pg = new THREE.BufferGeometry();
+        pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        const particlesMesh = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.04, color: 0xffaa00, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending }));
         blackHoleGroup.add(particlesMesh);
 
-        // Tilt to see the top better
         blackHoleGroup.rotation.x = 0.5;
         blackHoleGroup.rotation.z = 0.2;
 
-        // --- SCROLL ANIMATION LOGIC ---
-        // Calculate screen edge
-        const getEdgePosition = () => {
-          const dist = camera.position.z;
-          const vFOV = THREE.Math.degToRad(camera.fov);
-          const height = 2 * Math.tan(vFOV / 2) * dist;
-          const width = height * camera.aspect;
-          return width / 2;
+        const edge = () => {
+          const h = 2 * Math.tan(THREE.Math.degToRad(camera.fov) / 2) * camera.position.z;
+          return (h * camera.aspect) / 2;
         };
+        scrollGroup.position.x = -edge();
 
-        // Set initial position immediately to prevent center flash
-        scrollGroup.position.x = -getEdgePosition();
+        if (hasGSAP) {
+          const st = { trigger: "body", start: "top top", end: "bottom bottom", scrub: 1.5 };
+          // Left edge -> right edge across the whole page
+          gsap.fromTo(scrollGroup.position, { x: () => -edge() }, { x: () => edge(), ease: "none", scrollTrigger: { ...st, invalidateOnRefresh: true } });
+          // Rolling rotation
+          gsap.to(blackHoleGroup.rotation, { y: Math.PI * 4, z: -0.8, ease: "none", scrollTrigger: st });
+          // Star parallax (opposite direction)
+          gsap.to("#cosmic-canvas", { xPercent: -10, ease: "none", scrollTrigger: st });
+        }
 
-        // 1. Move Black Hole Left -> Right (Fixed using fromTo to prevent jumps)
-        gsap.fromTo(
-          scrollGroup.position,
-          { x: () => -getEdgePosition() }, // Start: Left Edge
-          {
-            x: () => getEdgePosition(), // End: Right Edge
-            ease: "none",
-            scrollTrigger: {
-              trigger: "body",
-              start: "top top",
-              end: "bottom bottom",
-              scrub: 1.5,
-              invalidateOnRefresh: true,
-            },
-          },
-        );
-
-        // 2. Rotate Black Hole (Rolling Effect)
-        gsap.to(blackHoleGroup.rotation, {
-          y: Math.PI * 4,
-          z: -0.8,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "body",
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1.5,
-          },
-        });
-
-        // 3. Move Background Stars (Parallax - Opposite Direction)
-        gsap.to("#cosmic-canvas", {
-          xPercent: -10, // Move canvas left
-          ease: "none",
-          scrollTrigger: {
-            trigger: "body",
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1.5,
-          },
-        });
-
-        // ANIMATION LOOP
-        const animate = () => {
+        (function animate() {
           requestAnimationFrame(animate);
-
           accretionDisk.rotation.z -= 0.005;
           particlesMesh.rotation.y -= 0.001;
-          // Wobble inside the group
-          blackHoleGroup.rotation.x =
-            0.5 + Math.sin(Date.now() * 0.0005) * 0.05;
-
+          blackHoleGroup.rotation.x = 0.5 + Math.sin(Date.now() * 0.0005) * 0.05;
           halo.lookAt(camera.position);
-
           renderer.render(scene, camera);
-        };
-
-        animate();
+        })();
 
         window.addEventListener("resize", () => {
           camera.aspect = window.innerWidth / window.innerHeight;
+          camera.position.z = window.innerWidth < 768 ? 4.0 : 2.5;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
-
-          if (window.innerWidth < 768) {
-            camera.position.z = 4.0;
-          } else {
-            camera.position.z = 2.5;
-          }
+          if (hasGSAP) ScrollTrigger.refresh();
         });
       };
-
       window.addEventListener("load", initBlackHole);
 
-      // --- 2. COSMIC DUST BACKGROUND ---
-      const canvas = document.getElementById("cosmic-canvas");
-      const ctx = canvas.getContext("2d");
-
-      let width, height;
-      let stars = [];
-
-      const initCanvas = () => {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-        stars = [];
-        createStars();
+      // ---------- Star field ----------
+      const cc = document.getElementById("cosmic-canvas");
+      const cx = cc.getContext("2d");
+      let cw, ch, stars = [];
+      const initStars = () => {
+        cw = window.innerWidth; ch = window.innerHeight;
+        cc.width = cw; cc.height = ch; stars = [];
+        const n = Math.floor((cw * ch) / 4000);
+        for (let i = 0; i < n; i++) stars.push({ x: Math.random() * cw, y: Math.random() * ch, s: Math.random() * 1.5, v: Math.random() * 0.2 + 0.05, o: Math.random() * 0.8 });
       };
-
-      const createStars = () => {
-        const starCount = Math.floor((width * height) / 4000);
-        for (let i = 0; i < starCount; i++) {
-          stars.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            size: Math.random() * 1.5,
-            speed: Math.random() * 0.2 + 0.05,
-            opacity: Math.random() * 0.8,
-          });
+      (function drawStars() {
+        cx.clearRect(0, 0, cw, ch);
+        for (const s of stars) {
+          s.x += s.v;
+          if (s.x > cw) { s.x = 0; s.y = Math.random() * ch; }
+          cx.beginPath(); cx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+          cx.fillStyle = `rgba(255,255,255,${s.o})`; cx.fill();
         }
+        requestAnimationFrame(drawStars);
+      })();
+      window.addEventListener("resize", initStars);
+      initStars();
+
+      // ---------- GSAP hero + smooth scroll plugin ----------
+      if (hasGSAP) {
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+        gsap.from(".gsap-hero", { duration: 1.2, y: 50, opacity: 0, stagger: 0.14, ease: "power3.out", delay: 0.9 });
+      }
+
+      // ---------- Scroll reveals (IntersectionObserver: content never stays hidden) ----------
+      const revealObs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); revealObs.unobserve(e.target); } });
+      }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+      document.querySelectorAll(".rv:not(.in)").forEach((el) => revealObs.observe(el));
+
+      // ---------- Counters ----------
+      const countObs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const el = e.target, target = parseFloat(el.dataset.target), dec = parseInt(el.dataset.dec || "0", 10);
+          const t0 = performance.now(), dur = 1400;
+          (function step(t) {
+            const p = Math.min((t - t0) / dur, 1), eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = (target * eased).toFixed(dec);
+            if (p < 1) requestAnimationFrame(step);
+          })(t0);
+          countObs.unobserve(el);
+        });
+      }, { threshold: 0.6 });
+      document.querySelectorAll(".counter").forEach((c) => countObs.observe(c));
+
+      // ---------- Typewriter ----------
+      (function () {
+        const el = document.getElementById("typed-text");
+        const lines = [
+          "Bridging theoretical physics and computational reality.",
+          "Gaia DR3 · open clusters · isochrone fitting.",
+          "Building Python pipelines for astronomical data.",
+          "M.Sc. Physics @ IIT Roorkee.",
+        ];
+        if (reduceMotion) { el.textContent = lines[0]; return; }
+        let li = 0, ci = 0, del = false;
+        (function tick() {
+          const cur = lines[li];
+          el.textContent = cur.slice(0, ci);
+          if (!del && ci === cur.length) { del = true; return setTimeout(tick, 2200); }
+          if (del && ci === 0) { del = false; li = (li + 1) % lines.length; return setTimeout(tick, 400); }
+          ci += del ? -1 : 1;
+          setTimeout(tick, del ? 22 : 42);
+        })();
+      })();
+
+      // ---------- Scroll spy ----------
+      const spySections = document.querySelectorAll("section[id]");
+      const spyLinks = document.querySelectorAll(".nav-link");
+      const spy = () => {
+        let cur = "home";
+        spySections.forEach((s) => { if (window.scrollY >= s.offsetTop - 220) cur = s.id; });
+        spyLinks.forEach((l) => {
+          const on = l.getAttribute("href") === "#" + cur;
+          l.classList.toggle("text-white", on);
+          l.classList.toggle("font-bold", on);
+          const u = l.querySelector(".nav-ul");
+          if (u) { u.classList.toggle("w-full", on); u.classList.toggle("w-0", !on); }
+        });
       };
+      window.addEventListener("scroll", spy, { passive: true });
+      spy();
 
-      const animateCanvas = () => {
-        ctx.clearRect(0, 0, width, height);
-
-        stars.forEach((star) => {
-          star.x += star.speed;
-          if (star.x > width) {
-            star.x = 0;
-            star.y = Math.random() * height;
-          }
-
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-          ctx.fill();
-        });
-
-        requestAnimationFrame(animateCanvas);
-      };
-
-      window.addEventListener("resize", initCanvas);
-      initCanvas();
-      animateCanvas();
-
-      // --- 3. GSAP ANIMATIONS (Standard) ---
-      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-
-      // Navbar ScrollSpy & Active State
-      const sections = document.querySelectorAll("section");
-      const navLinks = document.querySelectorAll(".nav-link");
-
-      window.addEventListener("scroll", () => {
-        let current = "";
-        sections.forEach((section) => {
-          const sectionTop = section.offsetTop;
-          if (scrollY >= sectionTop - 200) {
-            current = section.getAttribute("id");
-          }
-        });
-
-        navLinks.forEach((link) => {
-          link.classList.remove("text-white", "font-bold");
-          link.querySelector("span").classList.remove("w-full");
-          link.querySelector("span").classList.add("w-0");
-
-          if (link.getAttribute("href").includes(current)) {
-            link.classList.add("text-white", "font-bold");
-            link.querySelector("span").classList.remove("w-0");
-            link.querySelector("span").classList.add("w-full");
-          }
-        });
-      });
-
-      // Hero Fade In
-      gsap.from("#home h1, #home p, #home button", {
-        duration: 1.5,
-        y: 50,
-        opacity: 0,
-        stagger: 0.2,
-        ease: "power3.out",
-        delay: 0.5,
-      });
-
-      // Cards Fade Up
-      gsap.utils.toArray(".gsap-fade-up").forEach((element) => {
-        gsap.from(element, {
-          scrollTrigger: {
-            trigger: element,
-            start: "top 85%",
-          },
-          y: 50,
-          opacity: 0,
-          duration: 1,
-          ease: "power2.out",
-        });
-      });
-
-      // --- UPDATED ABOUT ME ANIMATIONS ---
-
-      // 1. Image: Slides Left -> Right
-      gsap.from(".about-img-anim", {
-        scrollTrigger: {
-          trigger: "#about",
-          start: "top 70%",
-        },
-        x: -100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-      });
-
-      // 2. Text: Slides Right -> Left
-      gsap.from(".about-text-anim", {
-        scrollTrigger: {
-          trigger: "#about",
-          start: "top 70%",
-        },
-        x: 100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 0.2,
-      });
-
-      // 3. Future Horizon: Fades Up from Bottom
-      gsap.from(".about-horizon-anim", {
-        scrollTrigger: {
-          trigger: ".about-horizon-anim",
-          start: "top 90%",
-        },
-        y: 50,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power2.out",
-        delay: 0.4,
-      });
-
-      // Tech Stack Stagger
-      gsap.from(".tech-item", {
-        scrollTrigger: { trigger: "#skills", start: "top 75%" },
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "back.out(1.7)",
-      });
-
-      // --- 4. 3D TILT ENGINE (Cards) ---
-      const tiltCards = document.querySelectorAll(".tilt-card");
-
-      tiltCards.forEach((card) => {
+      // ---------- 3D tilt ----------
+      document.querySelectorAll(".tilt-card").forEach((card) => {
         card.addEventListener("mousemove", (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-
-          const rotateX = ((y - centerY) / centerY) * -15;
-          const rotateY = ((x - centerX) / centerX) * 15;
-
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          const r = card.getBoundingClientRect();
+          const rx = ((e.clientY - r.top - r.height / 2) / r.height) * -15;
+          const ry = ((e.clientX - r.left - r.width / 2) / r.width) * 15;
+          card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.02,1.02,1.02)`;
         });
-
-        card.addEventListener("mouseleave", () => {
-          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-        });
+        card.addEventListener("mouseleave", () => { card.style.transform = "perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)"; });
       });
 
-      // --- 5. MOBILE MENU LOGIC ---
-      const btn = document.getElementById("mobile-menu-btn");
+      // ---------- Mobile menu ----------
       const menu = document.getElementById("mobile-menu");
-      const mobileLinks = document.querySelectorAll(".mobile-link");
+      document.getElementById("mobile-menu-btn").addEventListener("click", () => menu.classList.toggle("hidden"));
+      document.querySelectorAll(".mobile-link").forEach((l) => l.addEventListener("click", () => menu.classList.add("hidden")));
 
-      btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-      });
-
-      mobileLinks.forEach((link) => {
-        link.addEventListener("click", () => {
-          menu.classList.add("hidden");
-        });
+      // ---------- Contact form -> mailto ----------
+      document.getElementById("contact-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("f-name").value.trim();
+        const email = document.getElementById("f-email").value.trim();
+        const subj = document.getElementById("f-subject").value.trim();
+        const msg = document.getElementById("f-msg").value.trim();
+        const body = `${msg}\n\n— ${name} (${email})`;
+        window.location.href = `mailto:nkaushik3535@gmail.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
       });
     </script>
   </body>

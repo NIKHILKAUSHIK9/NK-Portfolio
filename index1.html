@@ -153,41 +153,13 @@
       .terminal-bar i { width:10px; height:10px; border-radius:50%; display:inline-block; }
       .terminal-body p { margin:.35rem 0; color:#9ca3af; }
       .terminal-body .k { color:#05d9e8; } .terminal-body .v { color:#fff; }
+      .field { width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:.75rem 1rem; color:#fff; font-size:.9rem; outline:none; transition:border-color .3s, box-shadow .3s; }
+      .field:focus { border-color:#ffaa00; box-shadow:0 0 0 3px rgba(255,170,0,.12); }
+      .field::placeholder { color:#6b7280; }
       .btn-glow { position:relative; overflow:hidden; transition:all .3s; }
       .btn-glow::before { content:""; position:absolute; top:50%; left:50%; width:0; height:0; background:rgba(255,255,255,.2); border-radius:50%; transform:translate(-50%,-50%); transition:width .6s, height .6s; }
       .btn-glow:hover::before { width:300px; height:300px; }
 
-
-      /* ---------- Research gallery (structure from reference) ---------- */
-      .gallery-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:30px; margin-top:20px; }
-      .gallery-item { position:relative; overflow:hidden; border-radius:24px; border:1px solid rgba(255,255,255,.08); cursor:pointer; transition:transform .35s, box-shadow .35s, border-color .35s; background:#05050a; height:100%; margin:0; outline:none; }
-      .gallery-item:hover, .gallery-item:focus-visible { transform:translateY(-8px); box-shadow:0 25px 50px rgba(0,0,0,.35); border-color:rgba(255,170,0,.3); }
-      .gallery-item img { width:100%; height:340px; object-fit:cover; object-position:center; display:block; transition:transform .6s; }
-      .gallery-item:hover img, .gallery-item:focus-visible img { transform:scale(1.08); }
-      .gallery-overlay { position:absolute; left:0; right:0; bottom:0; padding:48px 24px 18px; color:#fff; font-family:"Space Grotesk",sans-serif; font-size:1.15rem; background:linear-gradient(transparent, rgba(0,0,0,.94)); display:flex; align-items:center; justify-content:space-between; gap:12px; }
-      .gallery-overlay small { font-family:"JetBrains Mono",monospace; font-size:.68rem; letter-spacing:.14em; color:#ffaa00; }
-      .gallery-item.missing img { display:none; }
-      .gallery-item.missing::before { content:attr(data-missing); display:flex; align-items:center; justify-content:center; height:340px; padding:0 20px; text-align:center; color:#6b7280; font-family:"JetBrains Mono",monospace; font-size:.78rem; }
-      /* ---------- Observation archive modal (structure from reference) ---------- */
-      .modal { position:fixed; inset:0; display:none; justify-content:center; align-items:center; z-index:10001; }
-      .modal-background { position:absolute; inset:0; background:rgba(0,0,0,.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); cursor:zoom-out; }
-      .modal-window { position:relative; width:min(1100px,90vw); max-height:90vh; overflow:auto; background:rgba(10,10,14,.97); border-radius:28px; border:1px solid rgba(255,255,255,.08); z-index:2; padding:40px; animation:modal-in .4s ease-out; }
-      @keyframes modal-in { from { opacity:0; transform:translateY(30px) scale(.97); } to { opacity:1; transform:none; } }
-      #closeModal { position:absolute; top:25px; right:25px; width:45px; height:45px; border:none; border-radius:50%; background:rgba(255,255,255,.06); color:#fff; font-size:1.6rem; line-height:1; transition:background .3s, color .3s; z-index:3; }
-      #closeModal:hover, #closeModal:focus-visible { background:#ffaa00; color:#000; outline:none; }
-      .modal-header { margin-bottom:35px; padding-right:60px; }
-      .modal-title { font-family:"JetBrains Mono",monospace; color:#ffaa00; letter-spacing:3px; }
-      .modal-id { margin-top:10px; color:#9ca3af; }
-      .modal-id span { color:#fff; }
-      .modal-image img { width:100%; height:auto; display:block; border-radius:18px; margin-bottom:35px; background:#0a0a10; }
-      .archive-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:25px; margin-bottom:35px; }
-      .archive-grid:empty { display:none; }
-      .archive-item { padding:22px; border-radius:18px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); }
-      .archive-item h4 { color:#ffaa00; margin-bottom:12px; }
-      .observation-description h3 { color:#fff; margin-bottom:16px; font-family:"Space Grotesk",sans-serif; font-size:1.3rem; }
-      .observation-description p { line-height:1.9; color:#cbd5e1; }
-      @media (max-width:640px) { .modal-window { padding:24px 18px; border-radius:20px; } #closeModal { top:14px; right:14px; width:38px; height:38px; } .archive-grid { grid-template-columns:1fr; } }
-      @media (max-width:768px) { .gallery-grid { grid-template-columns:1fr; } .gallery-item img { height:260px; } .gallery-item.missing::before { height:260px; } }
 
       /* ---------- Social links (pill structure from reference) ---------- */
       .social-container { display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:40px; }
@@ -654,56 +626,17 @@
 
       <div class="divider"></div>
 
-      <!-- ================= 07 RESEARCH GALLERY ================= -->
-      <section id="gallery" class="py-24 px-4 sm:px-6 lg:px-8 bg-black/40 relative z-10">
-        <div class="max-w-6xl mx-auto">
-          <div class="mb-12 text-center rv">
-            <p class="section-number text-neon-purple/70 mb-2">07 / research gallery</p>
-            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-neon-purple">07.</span> Research Gallery</h2>
-            <p class="text-gray-400 mt-4 max-w-lg mx-auto">Selected plots from the open-cluster analysis. Click any figure to enlarge.</p>
-          </div>
-          <div class="gallery-grid">
-            <div class="rv">
-              <figure class="gallery-item" data-base="gmm_pic" data-missing="gmm_pic — image not found next to index.html" tabindex="0" role="button" aria-label="Enlarge: Gaussian Mixture Model">
-                <img src="gmm_pic.png" alt="Gaussian Mixture Model" />
-                <figcaption class="gallery-overlay"><span>Gaussian Mixture Model</span><small>FIG 01</small></figcaption>
-              </figure>
-            </div>
-            <div class="rv" style="--d:0.08s">
-              <figure class="gallery-item" data-base="imf_pic" data-missing="imf_pic — image not found next to index.html" tabindex="0" role="button" aria-label="Enlarge: Mass Function">
-                <img src="imf_pic.png" alt="Mass Function" />
-                <figcaption class="gallery-overlay"><span>Mass Function</span><small>FIG 02</small></figcaption>
-              </figure>
-            </div>
-            <div class="rv" style="--d:0.16s">
-              <figure class="gallery-item" data-base="isochrone_pic" data-missing="isochrone_pic — image not found next to index.html" tabindex="0" role="button" aria-label="Enlarge: Isochrone Fit">
-                <img src="isochrone_pic.png" alt="Isochrone Fit" />
-                <figcaption class="gallery-overlay"><span>Isochrone Fit</span><small>FIG 03</small></figcaption>
-              </figure>
-            </div>
-            <div class="rv" style="--d:0.24s">
-              <figure class="gallery-item" data-base="kinematics_pic" data-missing="kinematics_pic — image not found next to index.html" tabindex="0" role="button" aria-label="Enlarge: Kinematics Plot">
-                <img src="kinematics_pic.png" alt="Kinematics Plot" />
-                <figcaption class="gallery-overlay"><span>Kinematics Plot</span><small>FIG 04</small></figcaption>
-              </figure>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="divider"></div>
-
-      <!-- ================= 08 CONTACT / MISSION CONTROL ================= -->
+      <!-- ================= 07 CONTACT / MISSION CONTROL ================= -->
       <section id="contact" class="py-24 px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="max-w-7xl mx-auto w-full">
           <div class="mb-16 text-center rv">
-            <p class="section-number text-galaxy-gold/70 mb-2">08 / mission control</p>
-            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-galaxy-gold">08.</span> Mission Control</h2>
+            <p class="section-number text-galaxy-gold/70 mb-2">07 / mission control</p>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold"><span class="text-galaxy-gold">07.</span> Mission Control</h2>
             <p class="text-gray-400 mt-4 max-w-lg mx-auto">Connect on frequencies across the web. Transmissions welcome.</p>
           </div>
 
-          <div class="max-w-3xl mx-auto mb-14">
-            <div class="terminal rv">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-14">
+            <div class="terminal rv rv-l">
               <div class="terminal-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i><span class="ml-3">mission-terminal</span></div>
               <div class="terminal-body p-6">
                 <p>&gt; Initializing communication...</p>
@@ -716,6 +649,17 @@
                 <p>&gt; Transmission Ready<span class="typed-cursor">_</span></p>
               </div>
             </div>
+
+            <form id="contact-form" class="glass-card rounded-2xl p-6 md:p-8 space-y-4 rv rv-r" style="--d:.1s">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input class="field" type="text" id="f-name" placeholder="Name" required />
+                <input class="field" type="email" id="f-email" placeholder="Email" required />
+              </div>
+              <input class="field" type="text" id="f-subject" placeholder="Subject" required />
+              <textarea class="field" id="f-msg" rows="5" placeholder="Message" required></textarea>
+              <button type="submit" class="btn-glow w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-galaxy-gold text-black font-bold rounded-xl hover:bg-yellow-500 shadow-[0_0_20px_rgba(255,170,0,.4)] hover:shadow-[0_0_40px_rgba(255,170,0,.7)] text-sm"><i class="fas fa-paper-plane"></i>Transmit Message</button>
+              <p class="text-xs text-gray-600 font-mono">Opens your email client with the message pre-filled.</p>
+            </form>
           </div>
 
           <div class="social-container rv">
@@ -748,7 +692,6 @@
               <li><a href="#about" class="hover:text-cyan-bright transition-colors">About</a></li>
               <li><a href="#research" class="hover:text-cyan-bright transition-colors">Research</a></li>
               <li><a href="#projects" class="hover:text-cyan-bright transition-colors">Projects</a></li>
-              <li><a href="#gallery" class="hover:text-cyan-bright transition-colors">Gallery</a></li>
               <li><a href="#contact" class="hover:text-cyan-bright transition-colors">Mission Control</a></li>
             </ul>
           </div>
@@ -773,25 +716,6 @@
         </div>
       </div>
     </footer>
-
-        <div id="observationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-background"></div>
-      <div class="modal-window">
-        <button id="closeModal" type="button" aria-label="Close">&times;</button>
-        <div class="modal-header">
-          <div class="modal-title" id="modalTitle">OBSERVATION ARCHIVE</div>
-          <div class="modal-id">Figure ID : <span id="targetID"></span></div>
-        </div>
-        <div class="modal-image"><img id="modalImage" alt="" /></div>
-        <div class="modal-info">
-          <div class="archive-grid" id="archiveGrid"></div>
-          <div class="observation-description">
-            <h3 id="modalFigureTitle"></h3>
-            <p id="archiveDescription"></p>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <script>
       // ---------- Loader (never blocks, even if a CDN fails) ----------
@@ -832,7 +756,7 @@
           ring.style.left = rx + "px"; ring.style.top = ry + "px";
           requestAnimationFrame(follow);
         })();
-        document.querySelectorAll("a, button, .gallery-item").forEach((el) => {
+        document.querySelectorAll("a, button").forEach((el) => {
           el.addEventListener("mouseenter", () => { ring.style.width = ring.style.height = "54px"; ring.style.borderColor = "rgba(255,42,109,.8)"; dot.style.background = "#ff2a6d"; });
           el.addEventListener("mouseleave", () => { ring.style.width = ring.style.height = "36px"; ring.style.borderColor = "rgba(255,170,0,.6)"; dot.style.background = "#ffaa00"; });
         });
@@ -1054,94 +978,17 @@
       const menu = document.getElementById("mobile-menu");
       document.getElementById("mobile-menu-btn").addEventListener("click", () => menu.classList.toggle("hidden"));
       document.querySelectorAll(".mobile-link").forEach((l) => l.addEventListener("click", () => menu.classList.add("hidden")));
-      // ---------- Research gallery: find image extension + Observation Archive modal ----------
-      (function () {
-        const exts = ["png", "jpg", "jpeg", "webp", "PNG", "JPG", "JPEG", "WEBP"];
 
-        // Per-figure details shown in the modal. `fields` renders the reference's info grid
-        // (e.g. { label: "Target", lines: ["UBC 07"] }); leave it empty to hide the grid.
-        const FIGURE_DATA = {
-          gmm_pic: {
-            id: "FIG 01 · GMM",
-            heading: "Figure 1 — Gaussian Mixture Model",
-            fields: [],
-            caption: "Gaussian Mixture Model fitted to the cluster's astrometric data to separate probable cluster members from the surrounding field-star population.",
-          },
-          imf_pic: {
-            id: "FIG 02 · MASS FUNCTION",
-            heading: "Figure 2 — Mass Function",
-            fields: [],
-            caption: "Mass function of the cluster, showing the distribution of stellar masses estimated from isochrone models.",
-          },
-          isochrone_pic: {
-            id: "FIG 03 · ISOCHRONE",
-            heading: "Figure 3 — Isochrone Fit",
-            fields: [],
-            caption: "Isochrone fit to the cluster colour–magnitude diagram, used to estimate fundamental parameters such as age, extinction and metallicity.",
-          },
-          kinematics_pic: {
-            id: "FIG 04 · KINEMATICS",
-            heading: "Figure 4 — Kinematics Plot",
-            fields: [],
-            caption: "Kinematic analysis of the cluster based on Gaia proper motions and parallaxes, used to identify and characterise its member stars.",
-          },
-        };
-
-        const modal = document.getElementById("observationModal");
-        const modalImage = document.getElementById("modalImage");
-        const targetID = document.getElementById("targetID");
-        const figureTitle = document.getElementById("modalFigureTitle");
-        const archiveGrid = document.getElementById("archiveGrid");
-        const archiveDescription = document.getElementById("archiveDescription");
-        const closeBtn = document.getElementById("closeModal");
-        let lastFocus = null;
-
-        const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-        const open = (item) => {
-          const img = item.querySelector("img");
-          const label = item.querySelector("figcaption span").textContent.trim();
-          const data = FIGURE_DATA[item.dataset.base] || { id: label, heading: label, fields: [], caption: "" };
-          modalImage.src = img.currentSrc || img.src;
-          modalImage.alt = img.alt || label;
-          targetID.textContent = data.id;
-          figureTitle.textContent = data.heading;
-          archiveDescription.textContent = data.caption;
-          archiveGrid.innerHTML = data.fields
-            .map((f) => `<div class="archive-item"><h4>${esc(f.label)}</h4><p>${f.lines.map(esc).join("<br>")}</p></div>`)
-            .join("");
-          lastFocus = document.activeElement;
-          modal.style.display = "flex";
-          document.body.style.overflow = "hidden";
-          modal.querySelector(".modal-window").scrollTop = 0;
-          closeBtn.focus();
-        };
-        const close = () => {
-          modal.style.display = "none";
-          document.body.style.overflow = "";
-          if (lastFocus && lastFocus.focus) lastFocus.focus();
-        };
-
-        document.querySelectorAll(".gallery-item").forEach((item) => {
-          const img = item.querySelector("img");
-          const base = item.dataset.base;
-          let i = 0;
-          const next = () => {
-            i++;
-            if (i < exts.length) img.src = base + "." + exts[i];
-            else item.classList.add("missing");
-          };
-          img.addEventListener("error", next);
-          if (img.complete && img.naturalWidth === 0) next();
-          const go = () => { if (!item.classList.contains("missing")) open(item); };
-          item.addEventListener("click", go);
-          item.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
-        });
-
-        closeBtn.addEventListener("click", close);
-        modal.querySelector(".modal-background").addEventListener("click", close);
-        document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal.style.display === "flex") close(); });
-      })();
+      // ---------- Contact form -> mailto ----------
+      document.getElementById("contact-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("f-name").value.trim();
+        const email = document.getElementById("f-email").value.trim();
+        const subj = document.getElementById("f-subject").value.trim();
+        const msg = document.getElementById("f-msg").value.trim();
+        const body = `${msg}\n\n— ${name} (${email})`;
+        window.location.href = `mailto:nkaushik3535@gmail.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+      });
     </script>
   </body>
 </html>
